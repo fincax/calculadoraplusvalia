@@ -84,7 +84,7 @@ export function CheckboxRow({
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
-        className="mt-0.5 h-4 w-4 rounded border-ink-300 accent-brand-600"
+        className="mt-0.5 h-4 w-4 rounded border-ink-300 accent-accent-600"
         aria-describedby={help ? `${id}-help` : undefined}
       />
       <div>

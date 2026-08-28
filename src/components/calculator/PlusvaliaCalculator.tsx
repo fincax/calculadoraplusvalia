@@ -308,8 +308,8 @@ export default function PlusvaliaCalculator() {
                   key={t}
                   className={`cursor-pointer rounded-lg border px-3 py-2 text-center text-sm font-medium transition-colors ${
                     form.transferType === t
-                      ? "border-brand-600 bg-brand-50 text-brand-800"
-                      : "border-ink-300 bg-white text-ink-700 hover:border-brand-300"
+                      ? "border-accent-600 bg-brand-50 text-brand-900"
+                      : "border-ink-300 bg-white text-ink-700 hover:border-brand-400"
                   }`}
                 >
                   <input
@@ -632,7 +632,7 @@ export default function PlusvaliaCalculator() {
         <div className="flex flex-wrap items-center gap-4">
           <button
             type="submit"
-            className="rounded-lg bg-brand-700 px-8 py-3 text-base font-semibold text-white shadow-md transition-colors hover:bg-brand-600"
+            className="rounded-lg bg-brand-900 px-8 py-3 text-base font-semibold text-white shadow-md transition-colors hover:bg-brand-800"
           >
             Calcular la plusvalía
           </button>

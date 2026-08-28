@@ -40,7 +40,7 @@ export default function RootLayout({
               className="text-xl font-bold tracking-tight"
               aria-label="FINCAX, ir a la web principal"
             >
-              FINCA<span className="text-accent-400">X</span>
+              finca<span className="text-accent-500">x</span>
             </a>
             <nav aria-label="Principal">
               <ul className="flex items-center gap-5 text-sm">
@@ -71,7 +71,7 @@ export default function RootLayout({
                 <li>
                   <a
                     href="mailto:fincaxsevilla@gmail.com"
-                    className="rounded-md bg-accent-500 px-3 py-1.5 font-semibold text-brand-950 hover:bg-accent-400 transition-colors"
+                    className="rounded-md bg-accent-600 px-3 py-1.5 font-semibold text-white hover:bg-accent-500 transition-colors"
                   >
                     Contactar
                   </a>

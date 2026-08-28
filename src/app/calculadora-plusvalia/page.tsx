@@ -79,7 +79,7 @@ export default function CalculadoraPlusvaliaPage() {
       />
 
       <header className="no-print max-w-3xl">
-        <p className="text-xs font-semibold uppercase tracking-widest text-brand-500">
+        <p className="text-xs font-semibold uppercase tracking-widest text-accent-600">
           Herramientas profesionales · Servicios que te ayudan a decidir
         </p>
         <h1 className="mt-2 text-3xl font-bold text-brand-900 sm:text-4xl">

@@ -155,7 +155,7 @@ export default function LeadCapture({ result }: { result: CalculationResult }) {
             <button
               type="submit"
               disabled={status === "sending"}
-              className="rounded-lg bg-brand-700 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-600 disabled:opacity-60"
+              className="rounded-lg bg-accent-600 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-accent-500 disabled:opacity-60"
             >
               {status === "sending" ? "Enviando…" : "Quiero que me llaméis"}
             </button>
