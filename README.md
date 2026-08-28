@@ -68,6 +68,14 @@ npm run build      # build de producción
 Variables de entorno (ver `.env.example`): `NEXT_PUBLIC_SITE_URL`,
 `NEXT_PUBLIC_WHATSAPP_NUMBER` (opcional), `LEAD_WEBHOOK_URL` (opcional).
 
+## Despliegue
+
+Producción en un VPS (Clouding.io) con PM2 + Nginx y despliegue automático
+por GitHub Actions en cada push a `main` (tests → build → SSH deploy).
+Guía completa paso a paso: **[docs/DESPLIEGUE.md](docs/DESPLIEGUE.md)**.
+Estado de verificación de datos municipales:
+**[docs/VERIFICACION_DATOS.md](docs/VERIFICACION_DATOS.md)**.
+
 ## RGPD y privacidad
 
 Los cálculos se ejecutan íntegramente en el navegador: los datos económicos

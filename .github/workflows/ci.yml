@@ -1,0 +1,26 @@
+name: CI (tests y build)
+
+on:
+  pull_request:
+  push:
+    branches-ignore: [main]
+
+jobs:
+  test-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Tests del motor fiscal
+        run: npm test
+
+      - name: Build de producción
+        run: npm run build

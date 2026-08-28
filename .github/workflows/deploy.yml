@@ -1,0 +1,43 @@
+name: Desplegar en producción (Clouding.io)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  test-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Tests del motor fiscal
+        run: npm test
+
+      - name: Build de producción
+        run: npm run build
+
+  deploy:
+    needs: test-build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Desplegar por SSH en el VPS
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          script: /opt/fincax/app/scripts/deploy.sh
