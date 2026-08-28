@@ -52,7 +52,11 @@ export default function CalculadoraPlusvaliaPage() {
         applicationCategory: "FinanceApplication",
         operatingSystem: "Web",
         offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
-        provider: { "@type": "Organization", name: "FINCAX" },
+        provider: {
+          "@type": "Organization",
+          name: "FINCAX",
+          url: "https://fincax.es",
+        },
         areaServed: "Sevilla y provincia, España",
         inLanguage: "es",
       },
@@ -75,7 +79,10 @@ export default function CalculadoraPlusvaliaPage() {
       />
 
       <header className="no-print max-w-3xl">
-        <h1 className="text-3xl font-bold text-brand-900 sm:text-4xl">
+        <p className="text-xs font-semibold uppercase tracking-widest text-brand-500">
+          Herramientas profesionales · Servicios que te ayudan a decidir
+        </p>
+        <h1 className="mt-2 text-3xl font-bold text-brand-900 sm:text-4xl">
           Calculadora de Plusvalía Municipal
         </h1>
         <p className="mt-3 text-lg text-ink-700">

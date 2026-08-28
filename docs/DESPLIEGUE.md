@@ -139,6 +139,56 @@ pm2 restart fincax-web    # reinicio manual
 /opt/fincax/app/scripts/deploy.sh   # despliegue manual
 ```
 
+## Integración en fincax.es (sección «Herramientas profesionales»)
+
+Esta aplicación está pensada como **una herramienta más** de la sección
+«Herramientas profesionales · Servicios que te ayudan a decidir» de
+fincax.es (junto a la valoración con IA, la calculadora hipotecaria y el
+comparador). Su raíz `/` redirige a `/calculadora-plusvalia` y su cabecera
+enlaza de vuelta a fincax.es. Dos formas de publicarla bajo tu dominio:
+
+### Opción A — Subdominio (la más simple)
+
+1. Crea un registro **A**: `calculadora.fincax.es → IP del VPS`.
+2. En `deploy/nginx.conf.example`, usa `server_name calculadora.fincax.es;`.
+3. `certbot --nginx -d calculadora.fincax.es`.
+4. `.env`: `NEXT_PUBLIC_SITE_URL=https://calculadora.fincax.es`.
+5. En la web principal, añade la tarjeta de la herramienta enlazando a
+   `https://calculadora.fincax.es`.
+
+### Opción B — Misma URL que la web principal (`fincax.es/calculadora-plusvalia`)
+
+Solo si la web principal de fincax.es se sirve desde el **mismo Nginx** (o
+puedes tocar su configuración). En el `server {}` del dominio principal,
+añade un proxy de esa ruta hacia esta app:
+
+```nginx
+location /calculadora-plusvalia {
+    proxy_pass http://127.0.0.1:3000;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
+location /_next/ {          # estáticos de la app Next.js
+    proxy_pass http://127.0.0.1:3000;
+    proxy_set_header Host $host;
+}
+location /api/lead {        # API de leads de la calculadora
+    proxy_pass http://127.0.0.1:3000;
+    proxy_set_header Host $host;
+}
+```
+
+> Ojo: si la web principal también usa Next.js, el `location /_next/`
+> entraría en conflicto; en ese caso usa la Opción A (subdominio).
+
+### Texto sugerido para la tarjeta de la herramienta
+
+> **Calculadora de Plusvalía Municipal**
+> Calcula cuánto pagarías de plusvalía al vender, heredar o recibir un
+> inmueble en Sevilla y provincia. Compara el método objetivo y el real
+> con la normativa vigente y detecta si no tienes que pagar.
+
 ## Recomendado en GitHub (una vez creada `main`)
 
 1. **Settings → General → Default branch** → cambiar a `main`.

@@ -34,23 +34,39 @@ export default function RootLayout({
         </a>
 
         <header className="no-print bg-brand-900 text-white">
-          <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
-            <Link
-              href="/"
+          <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-4">
+            <a
+              href="https://fincax.es"
               className="text-xl font-bold tracking-tight"
-              aria-label="FINCAX, inicio"
+              aria-label="FINCAX, ir a la web principal"
             >
               FINCA<span className="text-accent-400">X</span>
-            </Link>
+            </a>
             <nav aria-label="Principal">
-              <ul className="flex items-center gap-6 text-sm">
-                <li>
-                  <Link
-                    href="/calculadora-plusvalia"
+              <ul className="flex items-center gap-5 text-sm">
+                <li className="hidden sm:block">
+                  <a
+                    href="https://fincax.es/propiedades"
                     className="hover:text-accent-400 transition-colors"
                   >
-                    Calculadora de plusvalía
-                  </Link>
+                    Propiedades
+                  </a>
+                </li>
+                <li className="hidden sm:block">
+                  <a
+                    href="https://fincax.es/blog"
+                    className="hover:text-accent-400 transition-colors"
+                  >
+                    Blog
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://fincax.es"
+                    className="hover:text-accent-400 transition-colors"
+                  >
+                    ← fincax.es
+                  </a>
                 </li>
                 <li>
                   <a
@@ -74,6 +90,13 @@ export default function RootLayout({
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <p>
                 © {new Date().getFullYear()} FINCAX · Sevilla ·{" "}
+                <a
+                  className="underline hover:text-brand-700"
+                  href="https://fincax.es"
+                >
+                  fincax.es
+                </a>{" "}
+                ·{" "}
                 <a
                   className="underline hover:text-brand-700"
                   href="mailto:fincaxsevilla@gmail.com"
