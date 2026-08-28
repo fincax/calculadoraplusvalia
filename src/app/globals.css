@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+/* Design tokens FINCAX */
+@theme {
+  --color-brand-50: #eef6f5;
+  --color-brand-100: #d5eae7;
+  --color-brand-200: #aad5d0;
+  --color-brand-300: #74b9b3;
+  --color-brand-400: #459a94;
+  --color-brand-500: #2b7f7a;
+  --color-brand-600: #206561;
+  --color-brand-700: #1c514f;
+  --color-brand-800: #1a4241;
+  --color-brand-900: #183737;
+  --color-brand-950: #0a1f1f;
+
+  --color-accent-400: #f5b942;
+  --color-accent-500: #eda517;
+  --color-accent-600: #d18a0b;
+
+  --color-ink-900: #101828;
+  --color-ink-700: #344054;
+  --color-ink-500: #667085;
+  --color-ink-300: #d0d5dd;
+  --color-ink-100: #f2f4f7;
+  --color-ink-50: #f9fafb;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-ink-50);
+  color: var(--color-ink-900);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Foco visible y accesible en toda la app */
+:focus-visible {
+  outline: 3px solid var(--color-brand-400);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Impresión: el informe de resultados se imprime limpio (Guardar como PDF) */
+@media print {
+  body {
+    background: #fff;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  .print-report {
+    box-shadow: none !important;
+    border: none !important;
+  }
+  a[href]::after {
+    content: "";
+  }
+}
+
+.print-only {
+  display: none;
+}
