@@ -88,8 +88,16 @@ const transferTypeLabels: Record<TransferType, { label: string; hint: string }> 
     },
   };
 
-export default function PlusvaliaCalculator() {
-  const [form, setForm] = useState<FormState>(initialState);
+export default function PlusvaliaCalculator({
+  initialMunicipalityCode,
+}: {
+  /** Preselecciona el municipio (páginas por municipio para SEO local). */
+  initialMunicipalityCode?: string;
+}) {
+  const [form, setForm] = useState<FormState>({
+    ...initialState,
+    municipalityCode: initialMunicipalityCode ?? initialState.municipalityCode,
+  });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [globalError, setGlobalError] = useState<string | null>(null);
   const [result, setResult] = useState<CalculationResult | null>(null);

@@ -1,14 +1,18 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import PlusvaliaCalculator from "@/components/calculator/PlusvaliaCalculator";
+import CoefficientTable from "@/components/CoefficientTable";
+import { listMunicipalities } from "@/lib/plusvalia/data/municipalities";
 
 export const metadata: Metadata = {
   title:
-    "Calculadora de Plusvalía Municipal (IIVTNU) en Sevilla y provincia — gratis",
+    "Calcular la Plusvalía Municipal en Sevilla — Calculadora gratuita 2026",
   description:
-    "Calcula cuánto podrías pagar de plusvalía municipal al vender, heredar o recibir un inmueble en Sevilla y provincia. Compara método objetivo y real, detecta la no sujeción y aplica bonificaciones. Con normativa vigente y fuentes oficiales.",
+    "Calcula la plusvalía municipal (IIVTNU) en Sevilla y provincia en 1 minuto: método objetivo vs. real, tabla de coeficientes 2026, bonificaciones y detección de no sujeción si vendes con pérdidas. Gratis, sin registro y con la ordenanza de Sevilla verificada.",
   alternates: { canonical: "/calculadora-plusvalia" },
   openGraph: {
-    title: "Calculadora de Plusvalía Municipal (IIVTNU) | FINCAX",
+    title:
+      "Calcular la Plusvalía Municipal en Sevilla — Calculadora gratuita | FINCAX",
     description:
       "Calcula la plusvalía municipal en Sevilla y provincia: método objetivo vs. incremento real, bonificaciones, plazos y recargos. Gratis y sin registro.",
   },
@@ -128,6 +132,80 @@ export default function CalculadoraPlusvaliaPage() {
             posibles recargos por presentación fuera de plazo (art. 27 LGT).
           </li>
         </ol>
+      </section>
+
+      <section aria-labelledby="coeficientes" className="no-print mt-16">
+        <h2 id="coeficientes" className="text-2xl font-bold text-brand-900">
+          Tabla de coeficientes de la plusvalía municipal (2026)
+        </h2>
+        <p className="mt-2 max-w-3xl text-ink-700">
+          El método objetivo multiplica el valor catastral del suelo por este
+          coeficiente según los años que hayas tenido el inmueble, y el
+          resultado por el tipo de gravamen del municipio (26,53 % en Sevilla
+          capital; máximo legal del 30 %).
+        </p>
+        <div className="mt-5 max-w-3xl">
+          <CoefficientTable />
+        </div>
+      </section>
+
+      <section aria-labelledby="ejemplo" className="no-print mt-16 max-w-3xl">
+        <h2 id="ejemplo" className="text-2xl font-bold text-brand-900">
+          Ejemplo real: cuánto se paga de plusvalía en Sevilla
+        </h2>
+        <p className="mt-2 text-ink-700">
+          Un piso en Triana comprado el 15/01/2010 por 150.000 € y vendido el
+          01/06/2025 por 250.000 €, con valor catastral total de 60.000 € y
+          valor del suelo de 30.000 €:
+        </p>
+        <ol className="mt-4 list-decimal space-y-2 pl-5 text-ink-700">
+          <li>
+            <strong>Método objetivo:</strong> 15 años completos → coeficiente
+            0,09 → base de 30.000 € × 0,09 = 2.700 € → cuota: 2.700 € × 26,53 %
+            = <strong>716,31 €</strong>.
+          </li>
+          <li>
+            <strong>Método real:</strong> ganancia de 100.000 €, de la que el
+            suelo representa el 50 % (30.000/60.000) → base de 50.000 € →
+            cuota: 13.265 €.
+          </li>
+          <li>
+            <strong>Resultado:</strong> se aplica la menor de las dos —{" "}
+            <strong>716,31 €</strong> por el método objetivo, con un ahorro de
+            12.548,69 € frente al real. Si este piso se hubiera vendido con
+            pérdidas, no habría que pagar nada (no sujeción del art. 104.5
+            TRLHL).
+          </li>
+        </ol>
+        <p className="mt-3 text-sm text-ink-500">
+          Este mismo cálculo es el que hace la calculadora de arriba con tus
+          datos, eligiendo siempre la opción más favorable y aplicando las
+          bonificaciones que correspondan.
+        </p>
+      </section>
+
+      <section aria-labelledby="municipios" className="no-print mt-16">
+        <h2 id="municipios" className="text-2xl font-bold text-brand-900">
+          Calculadora por municipio de la provincia de Sevilla
+        </h2>
+        <p className="mt-2 max-w-3xl text-ink-700">
+          Cada ayuntamiento fija su tipo de gravamen y bonificaciones. Consulta
+          la calculadora específica de tu municipio:
+        </p>
+        <ul className="mt-4 columns-2 gap-6 text-sm sm:columns-3 lg:columns-4">
+          {listMunicipalities()
+            .filter((m) => m.code !== "sevilla")
+            .map((m) => (
+              <li key={m.code} className="mb-1.5 break-inside-avoid">
+                <Link
+                  href={`/calculadora-plusvalia/${m.code}`}
+                  className="text-ink-700 underline decoration-ink-300 underline-offset-2 hover:text-accent-600"
+                >
+                  {m.name}
+                </Link>
+              </li>
+            ))}
+        </ul>
       </section>
 
       <section aria-labelledby="faq" className="no-print mt-16 max-w-3xl">
