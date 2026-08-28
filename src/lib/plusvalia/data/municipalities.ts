@@ -207,9 +207,26 @@ export function slugify(name: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
+/**
+ * URLs oficiales donde consultar la ordenanza del IIVTNU de los principales
+ * municipios, para acelerar su verificación (ver docs/VERIFICACION_DATOS.md).
+ */
+const OFFICIAL_ORDINANCE_URLS: Record<string, string> = {
+  "dos-hermanas":
+    "https://www.doshermanas.es/export/sites/ayto-dos-hermanas/concejalias/hacienda/hacienda/.galleries/DOCUMENTOS-Ordenanzas/2026/ORDENANZAS-FISCALES-Y-REGULADORAS-DE-LOS-PRECIOS-PUBLICOS-2026.pdf",
+  "alcala-de-guadaira":
+    "https://ovc.alcaladeguadaira.es/sta/CarpetaPublic/public?APP_CODE=STA&PAGE_CODE=ORDENANZAS_2024",
+  "mairena-del-aljarafe":
+    "https://www.mairenadelaljarafe.es/export/sites/mairena/.galleries/Ayuntamiento/Ordenanzas/Fiscales/03-Ordenanza-Fiscal-Reguladora-del-Impuesto-sobre-el-Incremento-de-Valor-de-los-Terrenos-de-Naturaleza-Urbana.pdf",
+  "mairena-del-alcor":
+    "https://ayuda.mairenadelalcor.es/hc/es/articles/32356338429202 (gestión delegada en el OPAEF)",
+};
+
 function legalMaximumRules(name: string): MunicipalityTaxRules {
+  const code = slugify(name);
+  const ordinanceUrl = OFFICIAL_ORDINANCE_URLS[code];
   return {
-    municipalityCode: slugify(name),
+    municipalityCode: code,
     municipalityName: name,
     province: "Sevilla",
     validFrom: "2024-01-01",
@@ -220,7 +237,10 @@ function legalMaximumRules(name: string): MunicipalityTaxRules {
     exemptions: COMMON_EXEMPTIONS,
     administrationMode: "unknown",
     officialSource:
-      "Estimación con los límites del TRLHL (tipo máximo 30 %, coeficientes máximos estatales). Ordenanza fiscal municipal pendiente de verificación: consulta la del ayuntamiento correspondiente o el Boletín Oficial de la Provincia de Sevilla.",
+      "Estimación con los límites del TRLHL (tipo máximo 30 %, coeficientes máximos estatales). Ordenanza fiscal municipal pendiente de verificación: " +
+      (ordinanceUrl
+        ? `consulta ${ordinanceUrl}`
+        : "consulta la del ayuntamiento correspondiente o el Boletín Oficial de la Provincia de Sevilla (bop.dipusevilla.es)."),
     lastVerifiedAt: LAST_REVIEW,
     verified: false,
   };
