@@ -114,6 +114,44 @@ describe("calculatePlusvalia — método objetivo vs real", () => {
   });
 });
 
+describe("periodos inferiores a un año (prorrateo por meses completos, art. 107.4)", () => {
+  it("prorratea el coeficiente anual por los meses completos", () => {
+    const r = calculatePlusvalia({
+      ...baseInput,
+      acquisitionDate: "2024-03-10",
+      transferDate: "2024-10-20",
+    });
+    // 7 meses completos → 0,15 × 7/12 = 0,0875 → 30.000 × 0,0875 = 2.625 €
+    expect(r.coefficient.monthsHeld).toBe(7);
+    expect(r.coefficient.annualCoefficient).toBe(0.15);
+    expect(r.coefficient.coefficient).toBeCloseTo(0.0875, 6);
+    expect(r.objectiveMethod.taxableBase).toBeCloseTo(2625, 2);
+    expect(r.objectiveMethod.grossTax).toBeCloseTo(696.41, 2);
+  });
+
+  it("sin ningún mes completo, la base objetiva es cero", () => {
+    const r = calculatePlusvalia({
+      ...baseInput,
+      acquisitionDate: "2024-03-10",
+      transferDate: "2024-03-25",
+    });
+    expect(r.coefficient.monthsHeld).toBe(0);
+    expect(r.objectiveMethod.taxableBase).toBe(0);
+    expect(r.chosenMethod).toBe("objective");
+    expect(r.finalTax).toBe(0);
+  });
+
+  it("no prorratea cuando hay al menos un año completo", () => {
+    const r = calculatePlusvalia({
+      ...baseInput,
+      acquisitionDate: "2023-05-01",
+      transferDate: "2024-06-01",
+    });
+    expect(r.coefficient.monthsHeld).toBeUndefined();
+    expect(r.coefficient.coefficient).toBe(0.15); // 1 año, tabla 2024
+  });
+});
+
 describe("titularidad y derechos reales", () => {
   it("aplica el porcentaje de titularidad", () => {
     const r = calculatePlusvalia({ ...baseInput, ownershipPercentage: 50 });
@@ -211,11 +249,23 @@ describe("bonificaciones (Sevilla, mortis causa vivienda habitual)", () => {
     expect(r.bonusesApplied).toHaveLength(0);
   });
 
-  it("no aplica si no es vivienda habitual o no hay parentesco directo", () => {
-    expect(
-      calculatePlusvalia({ ...herencia, isPrimaryResidenceOfDeceased: false })
-        .bonusesApplied
-    ).toHaveLength(0);
+  it("si no es vivienda habitual, aplica el 10 % de otros inmuebles (no el 95 %)", () => {
+    const r = calculatePlusvalia({
+      ...herencia,
+      isPrimaryResidenceOfDeceased: false,
+    });
+    expect(r.bonusesApplied).toHaveLength(1);
+    expect(r.bonusesApplied[0].percentage).toBe(10);
+    expect(r.bonusesApplied[0].amount).toBeCloseTo(95.51, 2);
+  });
+
+  it("las bonificaciones de vivienda habitual y de otros inmuebles son excluyentes", () => {
+    const r = calculatePlusvalia(herencia);
+    expect(r.bonusesApplied).toHaveLength(1);
+    expect(r.bonusesApplied[0].percentage).toBe(95);
+  });
+
+  it("sin parentesco directo no hay bonificación alguna", () => {
     expect(
       calculatePlusvalia({ ...herencia, isCloseRelative: false }).bonusesApplied
     ).toHaveLength(0);

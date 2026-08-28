@@ -49,6 +49,8 @@ export interface BonusRule {
   conditions: string[];
   /** Solo vivienda habitual del causante. */
   requiresPrimaryResidence?: boolean;
+  /** Solo inmuebles que NO sean la vivienda habitual (excluyente con la anterior). */
+  appliesOnlyIfNotPrimaryResidence?: boolean;
   /** Parentescos admitidos, texto informativo. */
   kinship?: string;
 }
@@ -157,6 +159,13 @@ export interface CalculationInput {
 
 export interface CoefficientResolution {
   yearsHeld: number;
+  /**
+   * Meses completos del periodo de generación cuando es inferior a un año
+   * (el coeficiente anual se prorratea por meses completos, art. 107.4 TRLHL).
+   */
+  monthsHeld?: number;
+  /** Coeficiente anual de la tabla antes del prorrateo (solo si bracket === "lt1"). */
+  annualCoefficient?: number;
   /** Clave de la tabla aplicada ("lt1", "1".."19", "gte20"). */
   bracket: string;
   coefficient: number;

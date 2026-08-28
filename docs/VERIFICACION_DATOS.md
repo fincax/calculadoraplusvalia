@@ -23,7 +23,7 @@ La calculadora distingue dos niveles de calidad de datos por municipio
 
 | Municipio | Estado | Datos aplicados | Fuente a verificar |
 |---|---|---|---|
-| Sevilla | ✅ Verificado | Tipo 26,53 %; coeficientes máximos estatales; bonificación mortis causa vivienda habitual 95/50/30 % por tramos de VCS (≤10.000 / ≤20.000 / ≤50.000 €), caudal ≤500.000 €, empadronamiento 2 años, mantenimiento 3 años; autoliquidación (ATSe) | [Ordenanzas fiscales — Agencia Tributaria de Sevilla](https://www.sevilla.org/servicios/agencia-tributaria-de-sevilla/ordenanzas-fiscales) |
+| Sevilla | ✅ Verificado (texto íntegro cotejado) | Tipo 26,53 % (art. 12.1); coeficientes máximos estatales (art. 8.2); bonificaciones mortis causa: vivienda habitual 95/50/30 % por tramos de VCS de toda la vivienda (≤10.000 / 10.001–20.000 / 20.001–50.000 €) y 10 % otros inmuebles — ambas computadas; 40 % locales afectos y 80 % interés social solo informadas; caudal ≤500.000 €, empadronamiento 2 años (o desde adquisición; centros asistenciales: retrotraíble 3 años), mantenimiento 3 años, carácter rogado; autoliquidación (art. 14) | Ordenanza fiscal IIVTNU, aprobada por el Pleno el 02/11/2023 y definitiva por Resolución de 22/12/2023 (texto íntegro cotejado el 28/08/2026). [Web ATSe](https://www.sevilla.org/servicios/agencia-tributaria-de-sevilla/ordenanzas-fiscales) |
 | Dos Hermanas | ⏳ Máximos | 30 % + coef. estatales | [Ordenanzas fiscales 2026 (PDF)](https://www.doshermanas.es/export/sites/ayto-dos-hermanas/concejalias/hacienda/hacienda/.galleries/DOCUMENTOS-Ordenanzas/2026/ORDENANZAS-FISCALES-Y-REGULADORAS-DE-LOS-PRECIOS-PUBLICOS-2026.pdf) |
 | Alcalá de Guadaíra | ⏳ Máximos | 30 % + coef. estatales | [Oficina Virtual del Contribuyente — Ordenanzas](https://ovc.alcaladeguadaira.es/sta/CarpetaPublic/public?APP_CODE=STA&PAGE_CODE=ORDENANZAS_2024) |
 | Mairena del Aljarafe | ⏳ Máximos | 30 % + coef. estatales | [Ordenanza fiscal IIVTNU (PDF)](https://www.mairenadelaljarafe.es/export/sites/mairena/.galleries/Ayuntamiento/Ordenanzas/Fiscales/03-Ordenanza-Fiscal-Reguladora-del-Impuesto-sobre-el-Incremento-de-Valor-de-los-Terrenos-de-Naturaleza-Urbana.pdf) |
@@ -35,6 +35,12 @@ La calculadora distingue dos niveles de calidad de datos por municipio
 > agregadores fiscales. Los datos pre-reforma encontrados (p. ej. Dos
 > Hermanas 25,16 % en su ordenanza de 2016) **no** se han usado por
 > corresponder al sistema anulado por la STC 182/2021.
+>
+> Sevilla capital se verificó cotejando el **texto íntegro de su ordenanza**
+> y el **BOE del RD-ley 26/2021** (documentos aportados el 28/08/2026). Ese
+> cotejo confirmó además el **prorrateo del coeficiente anual por meses
+> completos en periodos inferiores a un año** (art. 107.4 TRLHL, párr. 3.º),
+> que el motor aplica desde entonces.
 
 ## Cómo verificar un municipio (proceso)
 

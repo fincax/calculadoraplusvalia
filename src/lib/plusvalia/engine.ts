@@ -99,7 +99,7 @@ export function calculatePlusvalia(input: CalculationInput): CalculationResult {
       label: "Periodo de generación",
       detail:
         coefficient.bracket === "lt1"
-          ? "Inferior a 1 año"
+          ? `Inferior a 1 año (${coefficient.monthsHeld} mes(es) completo(s))`
           : coefficient.bracket === "gte20"
             ? "20 años o más"
             : `${coefficient.yearsHeld} años completos`,
@@ -108,7 +108,10 @@ export function calculatePlusvalia(input: CalculationInput): CalculationResult {
     },
     {
       label: "Coeficiente aplicable",
-      detail: coefficient.tableLabel,
+      detail:
+        coefficient.bracket === "lt1"
+          ? `${coefficient.tableLabel}. Coeficiente anual ${coefficient.annualCoefficient} prorrateado por ${coefficient.monthsHeld}/12 meses completos (art. 107.4 TRLHL)`
+          : coefficient.tableLabel,
       amount: coefficient.coefficient,
       kind: "coefficient",
     },
@@ -197,6 +200,7 @@ export function calculatePlusvalia(input: CalculationInput): CalculationResult {
       warnings: [
         ...warnings,
         "Para acreditar la inexistencia de incremento deberás aportar los títulos de adquisición y transmisión (escrituras) al ayuntamiento; la no sujeción no es automática, hay que declararla.",
+        "Si quien adquiere vuelve a transmitir en el futuro, su periodo de generación se contará desde la fecha de esta transmisión no sujeta (art. 107.4 TRLHL).",
       ],
       coefficient,
       effectiveSharePercentage: effectiveShare,
@@ -308,6 +312,11 @@ function resolveBonuses(
   for (const rule of rules.bonuses) {
     if (!rule.appliesTo.includes(input.transferType)) continue;
     if (rule.requiresPrimaryResidence && !input.isPrimaryResidenceOfDeceased)
+      continue;
+    if (
+      rule.appliesOnlyIfNotPrimaryResidence &&
+      input.isPrimaryResidenceOfDeceased
+    )
       continue;
     if (input.transferType === "herencia" && !input.isCloseRelative) continue;
 

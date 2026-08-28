@@ -45,7 +45,13 @@ export const COMMON_EXEMPTIONS: ExemptionRule[] = [
   },
 ];
 
-/** Ficha verificada de Sevilla capital. */
+/**
+ * Ficha de Sevilla capital, contrastada con el texto íntegro de la
+ * Ordenanza fiscal reguladora del IIVTNU (aprobada por el Pleno el
+ * 02/11/2023, definitiva por Resolución de 22/12/2023): tipo del 26,53 %
+ * (art. 12.1), coeficientes máximos estatales vigentes (art. 8.2),
+ * bonificaciones mortis causa del art. 12.3 y autoliquidación (art. 14).
+ */
 const SEVILLA_CAPITAL: MunicipalityTaxRules = {
   municipalityCode: "sevilla",
   ineCode: "41091",
@@ -58,30 +64,46 @@ const SEVILLA_CAPITAL: MunicipalityTaxRules = {
     {
       id: "sevilla-mortis-causa-vivienda",
       label:
-        "Bonificación mortis causa por adquisición de la vivienda habitual del causante",
+        "Bonificación mortis causa por adquisición de la vivienda habitual del causante (art. 12.3.a-c de la ordenanza)",
       appliesTo: ["herencia"],
       requiresPrimaryResidence: true,
-      kinship: "Cónyuge, descendientes o ascendientes",
+      kinship: "Cónyuge, descendientes/adoptados o ascendientes/adoptantes",
       tiers: [
         { upToLandCadastralValue: 10000, percentage: 95 },
         { upToLandCadastralValue: 20000, percentage: 50 },
         { upToLandCadastralValue: 50000, percentage: 30 },
       ],
       conditions: [
-        "El valor total del caudal hereditario no puede superar 500.000 €.",
-        "La persona causante debía estar empadronada en la vivienda al menos los 2 años anteriores al fallecimiento.",
-        "El inmueble debe mantenerse en el patrimonio de quien adquiere durante los 3 años siguientes.",
-        "Debe solicitarse expresamente al presentar la autoliquidación ante la Agencia Tributaria de Sevilla.",
+        "El valor total de la herencia no puede superar 500.000 € (se acredita con la declaración del ISD o la escritura de adjudicación).",
+        "La persona causante debía figurar empadronada en la vivienda al menos los 2 años anteriores al fallecimiento (o desde su adquisición si fue posterior; si residía en un centro asistencial, el requisito puede retrotraerse hasta 3 años a su última vivienda).",
+        "El tramo se determina por el valor catastral del suelo de TODA la vivienda, no por la parte de cada heredero.",
+        "Quien adquiere debe mantener la vivienda en su patrimonio al menos 3 años desde el devengo (salvo transmisión a descendientes, ascendientes o cónyuge del causante).",
+        "Es una bonificación rogada: hay que solicitarla y autoliquidar dentro del plazo voluntario (6 meses, prorrogables) ante la Agencia Tributaria de Sevilla.",
+      ],
+    },
+    {
+      id: "sevilla-mortis-causa-otros-inmuebles",
+      label:
+        "Bonificación mortis causa del 10 % por otros inmuebles del causante (art. 12.3.e de la ordenanza)",
+      appliesTo: ["herencia"],
+      appliesOnlyIfNotPrimaryResidence: true,
+      kinship: "Cónyuge, descendientes/adoptados o ascendientes/adoptantes",
+      tiers: [{ percentage: 10 }],
+      conditions: [
+        "El valor total de la herencia no puede superar 500.000 €.",
+        "Es una bonificación rogada: hay que solicitarla y autoliquidar dentro del plazo voluntario.",
+        "Si el inmueble era un local afecto a la actividad económica del causante, puede corresponder un 40 % en lugar del 10 % (art. 12.3.d, con requisitos propios): consúltalo con la Agencia Tributaria de Sevilla.",
       ],
     },
   ],
   additionalBonusNotes: [
-    "La ordenanza de Sevilla contempla además bonificaciones mortis causa del 40 % para locales afectos a la actividad económica del causante y del 10 % para otros inmuebles, con requisitos propios. No se aplican automáticamente en esta calculadora: consúltalas con la Agencia Tributaria de Sevilla.",
+    "La ordenanza contempla además: 40 % mortis causa para inmuebles afectos a la actividad económica del causante (art. 12.3.d, requisitos de la exención del art. 4.Ocho de la Ley del IP y mantenimiento 3 años) y 80 % en transmisiones lucrativas para actividades de carácter benéfico o interés social declaradas de especial interés municipal por el Pleno (art. 12.7). Ninguna se aplica automáticamente en esta calculadora.",
   ],
   exemptions: COMMON_EXEMPTIONS,
   administrationMode: "self_assessment",
   officialSource:
-    "Ordenanza fiscal reguladora del IIVTNU del Ayuntamiento de Sevilla (Agencia Tributaria de Sevilla): https://www.sevilla.org/servicios/agencia-tributaria-de-sevilla/ordenanzas-fiscales",
+    "Ordenanza fiscal reguladora del IIVTNU del Ayuntamiento de Sevilla, aprobada definitivamente el 22/12/2023 (texto íntegro cotejado). Publicación: https://www.sevilla.org/servicios/agencia-tributaria-de-sevilla/ordenanzas-fiscales",
+  publicationDate: "2023-12-22",
   lastVerifiedAt: LAST_REVIEW,
   verified: true,
 };

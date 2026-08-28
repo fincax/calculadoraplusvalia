@@ -166,10 +166,30 @@ export function bracketForYears(yearsHeld: number): string {
 }
 
 /**
+ * Meses completos transcurridos entre dos fechas ISO (sin fracciones de mes).
+ * Se usa para prorratear el coeficiente anual cuando el periodo de
+ * generación es inferior a un año (art. 107.4 TRLHL, párrafo tercero).
+ */
+export function computeFullMonths(
+  acquisitionISO: string,
+  transferISO: string
+): number {
+  const a = new Date(acquisitionISO + "T00:00:00Z");
+  const t = new Date(transferISO + "T00:00:00Z");
+  let months =
+    (t.getUTCFullYear() - a.getUTCFullYear()) * 12 +
+    (t.getUTCMonth() - a.getUTCMonth());
+  if (t.getUTCDate() < a.getUTCDate()) months -= 1;
+  return Math.max(0, months);
+}
+
+/**
  * Resuelve el coeficiente aplicable: usa la tabla municipal propia si existe
  * y, en su defecto, la tabla máxima estatal vigente en la fecha de devengo.
  * Si el coeficiente municipal supera el máximo estatal, prevalece el estatal
  * (art. 107.4 TRLHL: los coeficientes municipales no pueden exceder los máximos).
+ * En periodos inferiores a un año, el coeficiente anual se prorratea por el
+ * número de meses completos (art. 107.4 TRLHL, párrafo tercero).
  */
 export function resolveCoefficient(
   acquisitionISO: string,
@@ -186,6 +206,22 @@ export function resolveCoefficient(
     coefficient = Math.min(municipalCoefficients[bracket], stateValue);
   }
 
+  if (bracket === "lt1") {
+    const monthsHeld = computeFullMonths(acquisitionISO, transferISO);
+    const annualCoefficient = coefficient;
+    coefficient = round6((annualCoefficient * monthsHeld) / 12);
+    return {
+      yearsHeld,
+      monthsHeld,
+      annualCoefficient,
+      bracket,
+      coefficient,
+      tableId: stateTable.id,
+      tableLabel: stateTable.label,
+      tableSource: stateTable.source,
+    };
+  }
+
   return {
     yearsHeld,
     bracket,
@@ -194,4 +230,8 @@ export function resolveCoefficient(
     tableLabel: stateTable.label,
     tableSource: stateTable.source,
   };
+}
+
+function round6(v: number): number {
+  return Math.round((v + Number.EPSILON) * 1e6) / 1e6;
 }
