@@ -70,6 +70,13 @@ para verificar uno). Resumen:
   comunicado en la UI como cota superior. NO inventar tipos municipales:
   o fuente primaria o máximos. Datos pre-reforma (p. ej. Dos Hermanas
   25,16 % de 2016) NO sirven.
+- **OPAEF (procedimiento, no cuantía)**: desde el 02/09/2024 el OPAEF
+  (Diputación de Sevilla) gestiona la plusvalía por autoliquidación en 85
+  de los 106 municipios (BOP 30/08/2024). Unifica CÓMO se presenta/paga, no
+  el tipo/coeficientes/bonificaciones (los fija cada ordenanza). No cambia
+  el cálculo; solo informa dónde pagar. Clasificación en
+  `src/lib/plusvalia/data/opaef.ts` (`opaef`/`municipal`/`unknown`);
+  detalle y lista confirmada en `docs/VERIFICACION_DATOS.md`.
 
 ## Entorno remoto: limitación de red importante
 
@@ -120,6 +127,9 @@ le pide (¡pedírselos es la vía para desbloquear datos!).
 5. SEO off-page: Search Console (sitemap + indexación), enlace desde la
    home de fincax.es (tarjeta redactada en `docs/DESPLIEGUE.md`), Google
    Business Profile, nota de prensa local, enlaces de gestorías/abogados.
+6. Aportar el PDF del BOP de Sevilla de 30/08/2024 con la lista completa de
+   los 85 municipios cuya plusvalía gestiona el OPAEF, para completar con
+   exactitud la clasificación de `src/lib/plusvalia/data/opaef.ts`.
 
 ## SEO (plan y estado)
 

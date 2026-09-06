@@ -1,4 +1,5 @@
 import type { ExemptionRule, MunicipalityTaxRules } from "../types";
+import { isOpaefManaged, OPAEF_SEDE_PLUSVALIA_URL } from "./opaef";
 
 /**
  * Reglas fiscales por municipio (versionadas por fecha de vigencia).
@@ -247,6 +248,11 @@ const OFFICIAL_ORDINANCE_URLS: Record<string, string> = {
 function legalMaximumRules(name: string): MunicipalityTaxRules {
   const code = slugify(name);
   const ordinanceUrl = OFFICIAL_ORDINANCE_URLS[code];
+  // Donde consta que la plusvalía la gestiona el OPAEF, el régimen es de
+  // autoliquidación (desde el 02/09/2024). Esto es un dato de PROCEDIMIENTO:
+  // no cambia el tipo ni las bonificaciones, que siguen estimándose por
+  // máximos legales hasta verificar la ordenanza municipal.
+  const opaef = isOpaefManaged(code);
   return {
     municipalityCode: code,
     municipalityName: name,
@@ -257,12 +263,15 @@ function legalMaximumRules(name: string): MunicipalityTaxRules {
     coefficientsMode: "national_max",
     bonuses: [],
     exemptions: COMMON_EXEMPTIONS,
-    administrationMode: "unknown",
+    administrationMode: opaef ? "self_assessment" : "unknown",
     officialSource:
       "Estimación con los límites del TRLHL (tipo máximo 30 %, coeficientes máximos estatales). Ordenanza fiscal municipal pendiente de verificación: " +
       (ordinanceUrl
         ? `consulta ${ordinanceUrl}`
-        : "consulta la del ayuntamiento correspondiente o el Boletín Oficial de la Provincia de Sevilla (bop.dipusevilla.es)."),
+        : "consulta la del ayuntamiento correspondiente o el Boletín Oficial de la Provincia de Sevilla (bop.dipusevilla.es).") +
+      (opaef
+        ? ` La gestión del IIVTNU está delegada en el OPAEF (autoliquidación desde el 02/09/2024): ${OPAEF_SEDE_PLUSVALIA_URL}`
+        : ""),
     lastVerifiedAt: LAST_REVIEW,
     verified: false,
   };

@@ -6,6 +6,10 @@ import {
   getRulesForDate,
   listMunicipalities,
 } from "@/lib/plusvalia/data/municipalities";
+import {
+  OPAEF_SEDE_PLUSVALIA_URL,
+  plusvaliaGestor,
+} from "@/lib/plusvalia/data/opaef";
 import { formatDateES, formatPct } from "@/lib/plusvalia/format";
 
 /**
@@ -63,6 +67,27 @@ export default async function MunicipioPage({
     ...all.slice(index + 1, index + 4),
   ];
 
+  const gestor = plusvaliaGestor(municipio);
+  const dondeSePaga =
+    gestor === "opaef"
+      ? `En ${name} la gestión de la plusvalía municipal está delegada en el OPAEF (Organismo Provincial de Asistencia Económica y Fiscal de la Diputación de Sevilla). Desde el 2 de septiembre de 2024 se presenta y paga por autoliquidación en la sede electrónica del OPAEF.`
+      : `La mayoría de los municipios de la provincia de Sevilla (85 de 106) tienen delegada la gestión de la plusvalía en el OPAEF (Diputación de Sevilla), que desde el 2 de septiembre de 2024 se tramita por autoliquidación. Comprueba en la sede electrónica del OPAEF si ${name} está incluido; si no aparece, la gestiona la propia agencia tributaria del ayuntamiento.`;
+
+  const faqs = [
+    {
+      q: `¿Dónde se paga la plusvalía municipal en ${name}?`,
+      a: `${dondeSePaga} El OPAEF unifica cómo se presenta y se paga el impuesto, pero el tipo de gravamen y las bonificaciones los fija la ordenanza fiscal de cada ayuntamiento.`,
+    },
+    {
+      q: `¿Y si vendo con pérdidas en ${name}?`,
+      a: `Igual que en el resto de España: si no ha habido incremento de valor del suelo entre la compra y la venta, la transmisión no está sujeta al impuesto (art. 104.5 TRLHL). Debes acreditarlo aportando las escrituras de adquisición y transmisión.`,
+    },
+    {
+      q: `¿Qué plazo tengo para pagar la plusvalía en ${name}?`,
+      a: `30 días hábiles desde la transmisión en compraventas y donaciones, y 6 meses desde el fallecimiento en herencias (prorrogables hasta un año si se solicita antes de que venza el plazo).`,
+    },
+  ];
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -97,6 +122,14 @@ export default async function MunicipioPage({
             item: `/calculadora-plusvalia/${municipio}`,
           },
         ],
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: faqs.map((f) => ({
+          "@type": "Question",
+          name: f.q,
+          acceptedAnswer: { "@type": "Answer", text: f.a },
+        })),
       },
     ],
   };
@@ -163,6 +196,48 @@ export default async function MunicipioPage({
       </section>
 
       <PlusvaliaCalculator initialMunicipalityCode={municipio} />
+
+      <section
+        aria-labelledby="donde-se-paga"
+        className="no-print mt-16 max-w-3xl"
+      >
+        <h2 id="donde-se-paga" className="text-2xl font-bold text-brand-900">
+          Dónde y cómo se paga la plusvalía en {name}
+        </h2>
+        <div className="mt-4 rounded-xl border border-brand-200 bg-brand-50 p-5">
+          <p className="text-ink-700">{dondeSePaga}</p>
+          <p className="mt-3 text-sm text-ink-700">
+            <strong className="text-ink-900">Importante:</strong> el OPAEF
+            unifica el <em>procedimiento</em> (cómo se graba, se presenta y se
+            paga), pero el tipo de gravamen, los coeficientes y las
+            bonificaciones los sigue fijando la ordenanza fiscal de cada
+            ayuntamiento. Por eso, mientras no verifiquemos la ordenanza de{" "}
+            {name}, esta calculadora estima por los máximos legales.
+          </p>
+          <a
+            href={OPAEF_SEDE_PLUSVALIA_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 inline-block rounded-lg border border-brand-700 px-5 py-2.5 text-sm font-semibold text-brand-700 transition-colors hover:bg-white"
+          >
+            Ir a la sede del OPAEF (plusvalía) →
+          </a>
+        </div>
+      </section>
+
+      <section aria-labelledby="faq-municipio" className="no-print mt-16 max-w-3xl">
+        <h2 id="faq-municipio" className="text-2xl font-bold text-brand-900">
+          Preguntas frecuentes sobre la plusvalía en {name}
+        </h2>
+        <dl className="mt-6 space-y-6">
+          {faqs.map((f) => (
+            <div key={f.q}>
+              <dt className="font-semibold text-brand-800">{f.q}</dt>
+              <dd className="mt-1 leading-relaxed text-ink-700">{f.a}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
 
       <section aria-labelledby="otros-municipios" className="no-print mt-16">
         <h2 id="otros-municipios" className="text-xl font-bold text-brand-900">

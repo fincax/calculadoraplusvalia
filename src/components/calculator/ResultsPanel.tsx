@@ -11,6 +11,10 @@ import {
   formatNumber,
   formatPct,
 } from "@/lib/plusvalia/format";
+import {
+  isOpaefManaged,
+  OPAEF_SEDE_PLUSVALIA_URL,
+} from "@/lib/plusvalia/data/opaef";
 import LeadCapture from "./LeadCapture";
 
 function StepList({ steps }: { steps: CalculationStep[] }) {
@@ -259,6 +263,21 @@ export default function ResultsPanel({ result }: { result: CalculationResult }) 
               En {r.rules.municipalityName} el impuesto se gestiona por
               autoliquidación: debes calcular e ingresar la cuota tú mismo en
               plazo.
+            </p>
+          )}
+          {isOpaefManaged(r.rules.municipalityCode) && (
+            <p className="mt-2 text-xs text-ink-500">
+              La gestión está delegada en el OPAEF (Diputación de Sevilla);
+              desde el 02/09/2024 se presenta por autoliquidación en su{" "}
+              <a
+                href={OPAEF_SEDE_PLUSVALIA_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-brand-700"
+              >
+                sede electrónica
+              </a>
+              .
             </p>
           )}
         </div>
