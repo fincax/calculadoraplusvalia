@@ -1,3 +1,4 @@
+import { PlusvaliaInputError } from "./errors";
 import type { CoefficientResolution } from "./types";
 
 /**
@@ -124,7 +125,7 @@ export function getStateTableForDate(transferDateISO: string): CoefficientTable 
       (t.validTo === undefined || transferDateISO <= t.validTo)
   );
   if (!table) {
-    throw new Error(
+    throw new PlusvaliaInputError(
       `No hay tabla de coeficientes vigente para la fecha de devengo ${transferDateISO}. ` +
         `El sistema actual solo es aplicable a devengos desde el ${REFORM_START_DATE}.`
     );
@@ -143,10 +144,12 @@ export function computeYearsHeld(
   const a = new Date(acquisitionISO + "T00:00:00Z");
   const t = new Date(transferISO + "T00:00:00Z");
   if (Number.isNaN(a.getTime()) || Number.isNaN(t.getTime())) {
-    throw new Error("Fechas de adquisición o transmisión no válidas.");
+    throw new PlusvaliaInputError(
+      "Fechas de adquisición o transmisión no válidas."
+    );
   }
   if (t <= a) {
-    throw new Error(
+    throw new PlusvaliaInputError(
       "La fecha de transmisión debe ser posterior a la de adquisición."
     );
   }

@@ -3,6 +3,18 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  async redirects() {
+    return [
+      {
+        // Sevilla capital se sirve en la página principal (no tiene página
+        // por municipio, para no canibalizar la consulta). Redirigimos el
+        // slug para no dejar un 404 indexable.
+        source: "/calculadora-plusvalia/sevilla",
+        destination: "/calculadora-plusvalia",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

@@ -24,14 +24,14 @@ ssh root@IP_DEL_SERVIDOR
 
 (Clouding.io te da la contraseña o clave al crear el servidor.)
 
-## 2. Instalar Node 20, PM2, Nginx y Git (en el servidor)
+## 2. Instalar Node 22, PM2, Nginx y Git (en el servidor)
 
 ```bash
 apt update && apt upgrade -y
-curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
 apt install -y nodejs nginx git
 npm install -g pm2
-node -v   # debe mostrar v20.x
+node -v   # debe mostrar v22.x
 ```
 
 ## 3. Dar acceso al servidor al repositorio (deploy key)

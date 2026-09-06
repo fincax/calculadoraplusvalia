@@ -237,10 +237,16 @@ Ver 2.5. Añadir además un cuadro «Dónde se paga la plusvalía en X»
 
 ## 5. Orden de ejecución recomendado
 
-1. **Semana 1 (fiabilidad)**: leads por email + copia en fichero (2.1);
-   ESLint en CI (2.2); favicon y OG image (2.3); Node 22 (2.9); JSON-LD
-   absoluto y `RealEstateAgent` (2.4); redirección de `/sevilla`;
-   `PlusvaliaInputError` unificado y aviso por devengo futuro (2.8).
+1. ✅ **Semana 1 (fiabilidad) — COMPLETADA (06/09/2026)**: leads por email
+   SMTP + copia en fichero JSONL + reenvío a webhook, con validación de
+   contacto y honeypot antispam (2.1); ESLint (flat config) con paso en CI y
+   deploy (2.2); favicon `icon.svg`, `apple-icon` y `opengraph-image` (2.3);
+   Node 22 en CI/deploy/guía + `.nvmrc` + `engines` (2.9); JSON-LD con URLs
+   absolutas y bloque `RealEstateAgent` (2.4); redirección 308 de
+   `/calculadora-plusvalia/sevilla` a la principal; `PlusvaliaInputError`
+   unificado (errores concretos en la UI) y aviso por devengo futuro (2.8);
+   además `/api/health` y verificación del despliegue en `deploy.sh`.
+   63 tests en verde, lint/tipos/build limpios y E2E correcto.
 2. **Semana 2 (potencia)**: enlace compartible (4.1); curva por años
    (4.2); reducción del 25 % e intereses (2.8); tests de `parseAmount`,
    leads y E2E en CI (2.10); accesibilidad del foco y botón «Limpiar» (3).

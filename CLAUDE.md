@@ -20,10 +20,16 @@ datos. Este repo empezó VACÍO: todo se construyó aquí desde cero.
 
 ```bash
 npm run dev / build / start
-npm test                      # 43 tests unitarios del motor
+npm run lint                  # ESLint (flat config: next/core-web-vitals + ts)
+npm test                      # 63 tests unitarios (motor + leads + OPAEF)
 node scripts/smoke-e2e.mjs    # E2E en Chromium (requiere servidor en :3000;
                               # ejecutable en /opt/pw-browsers/chromium)
 ```
+
+Node 22 LTS (ver `.nvmrc` y `engines`). Iconos y Open Graph generados por
+Next (`src/app/icon.svg`, `apple-icon.tsx`, `opengraph-image.tsx`):
+declarar `openGraph` en una página SUPRIME la imagen del fichero global, por
+eso las páginas no lo declaran (og:title/description salen de title/desc).
 
 ## Arquitectura (regla de oro: motor desacoplado de la UI)
 
@@ -123,7 +129,11 @@ le pide (¡pedírselos es la vía para desbloquear datos!).
    subdominio); opciones A/B documentadas en la guía.
 3. Secrets SSH en GitHub Actions (sección 6) → activa el deploy automático.
 4. `.env` de producción: `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_WHATSAPP_NUMBER`
-   (activa el botón de WhatsApp), `LEAD_WEBHOOK_URL` (destino de leads).
+   (activa el botón de WhatsApp) y el destino de leads. Los leads se entregan
+   por varias vías redundantes (ver `.env.example`): email SMTP
+   (`LEAD_SMTP_*` + `LEAD_TO`; con Gmail, contraseña de aplicación), copia en
+   fichero (`LEAD_LOG_FILE`, por defecto `leads.jsonl`) y/o `LEAD_WEBHOOK_URL`.
+   Basta configurar UNA para no perder ningún contacto.
 5. SEO off-page: Search Console (sitemap + indexación), enlace desde la
    home de fincax.es (tarjeta redactada en `docs/DESPLIEGUE.md`), Google
    Business Profile, nota de prensa local, enlaces de gestorías/abogados.

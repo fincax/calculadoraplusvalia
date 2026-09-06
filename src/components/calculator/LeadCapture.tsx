@@ -25,6 +25,8 @@ export default function LeadCapture({ result }: { result: CalculationResult }) {
   const [name, setName] = useState("");
   const [contact, setContact] = useState("");
   const [consent, setConsent] = useState(false);
+  // Campo trampa (honeypot): oculto para personas, atractivo para bots.
+  const [company, setCompany] = useState("");
   const [status, setStatus] = useState<
     "idle" | "sending" | "ok" | "error" | "invalid"
   >("idle");
@@ -44,6 +46,7 @@ export default function LeadCapture({ result }: { result: CalculationResult }) {
           name: name.trim(),
           contact: contact.trim(),
           consent: true,
+          company,
           summary: {
             municipality: result.rules.municipalityName,
             transferType: result.input.transferType,
@@ -119,6 +122,18 @@ export default function LeadCapture({ result }: { result: CalculationResult }) {
               value={contact}
               onChange={(e) => setContact(e.target.value)}
               required
+            />
+          </div>
+          {/* Honeypot antispam: oculto y fuera del foco; si se rellena, se descarta. */}
+          <div aria-hidden="true" className="absolute left-[-9999px] h-0 w-0 overflow-hidden">
+            <label htmlFor="lead-company">No rellenar</label>
+            <input
+              id="lead-company"
+              type="text"
+              tabIndex={-1}
+              autoComplete="off"
+              value={company}
+              onChange={(e) => setCompany(e.target.value)}
             />
           </div>
           <div className="flex items-start gap-2 sm:col-span-2">

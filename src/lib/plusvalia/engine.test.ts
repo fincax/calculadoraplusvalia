@@ -302,6 +302,40 @@ describe("municipios no verificados (máximos legales)", () => {
   });
 });
 
+describe("aviso por devengo futuro", () => {
+  it("avisa cuando la transmisión es de un año posterior al actual", () => {
+    const futureYear = new Date().getUTCFullYear() + 3;
+    const r = calculatePlusvalia({
+      ...baseInput,
+      transferDate: `${futureYear}-06-01`,
+    });
+    expect(r.warnings.join(" ")).toMatch(/año futuro|actualizan cada año/i);
+  });
+  it("no avisa para un devengo del año en curso o pasado", () => {
+    const r = calculatePlusvalia(baseInput); // 2025
+    expect(r.warnings.join(" ")).not.toMatch(/año futuro/i);
+  });
+});
+
+describe("errores de derecho real como PlusvaliaInputError", () => {
+  it("usufructo vitalicio sin edad lanza PlusvaliaInputError (mensaje concreto)", () => {
+    expect(() =>
+      calculatePlusvalia({
+        ...baseInput,
+        realRight: { kind: "usufructo_vitalicio" },
+      })
+    ).toThrow(PlusvaliaInputError);
+  });
+  it("usufructo temporal sin duración lanza PlusvaliaInputError", () => {
+    expect(() =>
+      calculatePlusvalia({
+        ...baseInput,
+        realRight: { kind: "usufructo_temporal" },
+      })
+    ).toThrow(PlusvaliaInputError);
+  });
+});
+
 describe("validación de entradas", () => {
   it("rechaza devengos anteriores a la reforma de 2021", () => {
     expect(() =>

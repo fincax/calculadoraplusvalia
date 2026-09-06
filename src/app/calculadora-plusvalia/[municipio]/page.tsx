@@ -20,6 +20,8 @@ import { formatDateES, formatPct } from "@/lib/plusvalia/format";
 
 export const dynamicParams = false;
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://fincax.es";
+
 function provinceMunicipalities() {
   return listMunicipalities().filter((m) => m.code !== "sevilla");
 }
@@ -43,10 +45,9 @@ export async function generateMetadata({
     title: `Calcular la Plusvalía Municipal en ${name} — Calculadora gratuita`,
     description: `Calcula la plusvalía municipal (IIVTNU) de ${name} (Sevilla) en 1 minuto: método objetivo y real, coeficientes vigentes, plazos y detección de no sujeción si vendes con pérdidas. Gratis y sin registro.`,
     alternates: { canonical: `/calculadora-plusvalia/${municipio}` },
-    openGraph: {
-      title: `Calculadora de Plusvalía Municipal en ${name} | FINCAX`,
-      description: `Estima la plusvalía municipal de ${name} al vender, heredar o donar un inmueble, con la normativa vigente.`,
-    },
+    // Sin `openGraph` explícito: así Next.js aplica la imagen del fichero
+    // global `opengraph-image.tsx` (declararlo la suprimiría). El og:title y
+    // og:description se derivan de `title`/`description`.
   };
 }
 
@@ -94,12 +95,13 @@ export default async function MunicipioPage({
       {
         "@type": "WebApplication",
         name: `Calculadora de Plusvalía Municipal en ${name}`,
-        url: `/calculadora-plusvalia/${municipio}`,
+        url: `${SITE_URL}/calculadora-plusvalia/${municipio}`,
         applicationCategory: "FinanceApplication",
         operatingSystem: "Web",
         offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
         provider: {
-          "@type": "Organization",
+          "@type": "RealEstateAgent",
+          "@id": `${SITE_URL}/#organization`,
           name: "FINCAX",
           url: "https://fincax.es",
         },
@@ -113,13 +115,13 @@ export default async function MunicipioPage({
             "@type": "ListItem",
             position: 1,
             name: "Calculadora de Plusvalía Municipal",
-            item: "/calculadora-plusvalia",
+            item: `${SITE_URL}/calculadora-plusvalia`,
           },
           {
             "@type": "ListItem",
             position: 2,
             name: name,
-            item: `/calculadora-plusvalia/${municipio}`,
+            item: `${SITE_URL}/calculadora-plusvalia/${municipio}`,
           },
         ],
       },

@@ -1,6 +1,7 @@
 import { REFORM_START_DATE, resolveCoefficient } from "./coefficients";
 import { computeSurcharge, getDeadline } from "./deadlines";
 import { getRulesForDate } from "./data/municipalities";
+import { PlusvaliaInputError } from "./errors";
 import { valuateRealRight } from "./realRights";
 import type {
   AppliedBonus,
@@ -22,7 +23,7 @@ import type {
  * porcentaje de titularidad y derechos reales.
  */
 
-export class PlusvaliaInputError extends Error {}
+export { PlusvaliaInputError };
 
 export function calculatePlusvalia(input: CalculationInput): CalculationResult {
   validateInput(input);
@@ -49,6 +50,17 @@ export function calculatePlusvalia(input: CalculationInput): CalculationResult {
   if (!rules.verified) {
     warnings.push(
       `Los datos de la ordenanza de ${rules.municipalityName} no están verificados: el cálculo aplica el tipo máximo legal (30 %) y los coeficientes máximos estatales, por lo que la cuota real puede ser inferior. Consulta la ordenanza fiscal del municipio.`
+    );
+  }
+
+  // Aviso por devengo futuro: los coeficientes del método objetivo se
+  // actualizan cada año (Ley de Presupuestos), así que una simulación con
+  // fecha de un año posterior al actual puede variar cuando se apruebe la
+  // tabla de ese ejercicio.
+  const currentYear = new Date().getUTCFullYear();
+  if (Number(input.transferDate.slice(0, 4)) > currentYear) {
+    warnings.push(
+      "La fecha de transmisión es de un año futuro: los coeficientes del método objetivo se actualizan cada año mediante la Ley de Presupuestos, por lo que la cuota definitiva de ese ejercicio podría diferir de esta estimación (calculada con la tabla vigente)."
     );
   }
 
