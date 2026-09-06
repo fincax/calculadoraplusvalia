@@ -214,6 +214,13 @@ export interface SurchargeResult {
   monthsLate?: number;
   surchargePercentage?: number;
   surchargeAmount?: number;
+  /** Recargo con la reducción del 25 % del art. 27.5 LGT (pago en plazo, sin recurso). */
+  reducedSurchargeAmount?: number;
+  reductionNote?: string;
+  /** Intereses de demora (solo a partir de 12 meses de retraso). */
+  interestRate?: number;
+  interestDays?: number;
+  interestAmount?: number;
   interestNote?: string;
   legalBasis: string;
   description: string;

@@ -1,8 +1,14 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { calculatePlusvalia, PlusvaliaInputError } from "@/lib/plusvalia/engine";
 import { listMunicipalities } from "@/lib/plusvalia/data/municipalities";
+import { parseAmount } from "@/lib/plusvalia/parse";
+import {
+  decodeShareParams,
+  encodeShareParams,
+  type ShareState,
+} from "@/lib/plusvalia/share";
 import type {
   CalculationInput,
   CalculationResult,
@@ -12,26 +18,12 @@ import type {
 import { CheckboxRow, Field, Fieldset, inputClass } from "@/components/ui";
 import ResultsPanel from "./ResultsPanel";
 
-interface FormState {
-  municipalityCode: string;
-  transferType: TransferType;
-  acquisitionDate: string;
-  transferDate: string;
-  acquisitionValue: string;
-  transferValue: string;
-  cadastralValueTotal: string;
-  cadastralValueLand: string;
-  ownershipPercentage: string;
-  rightKind: RightKind;
-  usufructuaryAge: string;
-  usufructDurationYears: string;
-  underlyingUsufruct: "vitalicio" | "temporal";
-  isPrimaryResidenceOfDeceased: boolean;
-  isCloseRelative: boolean;
-  isDacionEnPago: boolean;
-  showLateFiling: boolean;
-  filingDate: string;
-}
+/** Fecha mínima admitida (entrada en vigor del sistema actual, RD-ley 26/2021). */
+const MIN_TRANSFER_DATE = "2021-11-10";
+
+// El estado del formulario coincide con los campos serializables del enlace
+// compartible (src/lib/plusvalia/share.ts).
+type FormState = ShareState;
 
 const initialState: FormState = {
   municipalityCode: "sevilla",
@@ -53,24 +45,6 @@ const initialState: FormState = {
   showLateFiling: false,
   filingDate: "",
 };
-
-/**
- * Convierte una cadena en formato es-ES o neutro en número:
- * "150.000,50" → 150000.5 · "150.000" → 150000 · "1500.5" → 1500.5
- */
-function parseAmount(raw: string): number {
-  const s = raw.trim();
-  if (!s) return NaN;
-  if (s.includes(",")) return Number(s.replace(/\./g, "").replace(",", "."));
-  const dots = s.match(/\./g)?.length ?? 0;
-  if (dots > 1) return Number(s.replace(/\./g, ""));
-  if (dots === 1) {
-    const decimals = s.split(".")[1];
-    // Un solo punto con tres dígitos detrás se interpreta como separador de miles.
-    return decimals.length === 3 ? Number(s.replace(".", "")) : Number(s);
-  }
-  return Number(s);
-}
 
 const transferTypeLabels: Record<TransferType, { label: string; hint: string }> =
   {
@@ -101,9 +75,49 @@ export default function PlusvaliaCalculator({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [globalError, setGlobalError] = useState<string | null>(null);
   const [result, setResult] = useState<CalculationResult | null>(null);
+  const [copied, setCopied] = useState(false);
   const resultsRef = useRef<HTMLDivElement>(null);
 
   const municipalities = useMemo(() => listMunicipalities(), []);
+
+  // Prefill desde la URL (enlace compartible). Se ejecuta solo en cliente,
+  // tras la hidratación, para no provocar desajustes de renderizado.
+  useEffect(() => {
+    const decoded = decodeShareParams(window.location.search);
+    if (Object.keys(decoded).length > 0) {
+      setForm((f) => ({ ...f, ...decoded }));
+    }
+  }, []);
+
+  function currentShareUrl(): string {
+    const qs = encodeShareParams(form);
+    const base = window.location.origin + window.location.pathname;
+    return qs ? `${base}?${qs}` : base;
+  }
+
+  async function copyShareLink() {
+    try {
+      const url = currentShareUrl();
+      await navigator.clipboard.writeText(url);
+      window.history.replaceState(null, "", url);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2500);
+    } catch {
+      setCopied(false);
+    }
+  }
+
+  function resetForm() {
+    setForm({
+      ...initialState,
+      municipalityCode: initialMunicipalityCode ?? initialState.municipalityCode,
+    });
+    setErrors({});
+    setGlobalError(null);
+    setResult(null);
+    setCopied(false);
+    window.history.replaceState(null, "", window.location.pathname);
+  }
 
   const set = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     setForm((f) => ({ ...f, [key]: value }));
@@ -314,7 +328,7 @@ export default function PlusvaliaCalculator({
               {(Object.keys(transferTypeLabels) as TransferType[]).map((t) => (
                 <label
                   key={t}
-                  className={`cursor-pointer rounded-lg border px-3 py-2 text-center text-sm font-medium transition-colors ${
+                  className={`cursor-pointer rounded-lg border px-3 py-2 text-center text-sm font-medium transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-brand-500 has-[:focus-visible]:ring-offset-1 ${
                     form.transferType === t
                       ? "border-accent-600 bg-brand-50 text-brand-900"
                       : "border-ink-300 bg-white text-ink-700 hover:border-brand-400"
@@ -367,6 +381,7 @@ export default function PlusvaliaCalculator({
             <input
               id="fecha-transmision"
               type="date"
+              min={MIN_TRANSFER_DATE}
               className={inputClass}
               value={form.transferDate}
               onChange={(e) => set("transferDate", e.target.value)}
@@ -637,18 +652,33 @@ export default function PlusvaliaCalculator({
           </div>
         )}
 
-        <div className="flex flex-wrap items-center gap-4">
+        <div className="flex flex-wrap items-center gap-3">
           <button
             type="submit"
             className="rounded-lg bg-brand-900 px-8 py-3 text-base font-semibold text-white shadow-md transition-colors hover:bg-brand-800"
           >
             Calcular la plusvalía
           </button>
-          <p className="text-xs text-ink-500">
-            El cálculo se hace en tu navegador: no enviamos ni guardamos tus
-            datos.
-          </p>
+          <button
+            type="button"
+            onClick={copyShareLink}
+            className="rounded-lg border border-brand-700 px-5 py-3 text-sm font-semibold text-brand-700 transition-colors hover:bg-brand-50"
+          >
+            {copied ? "¡Enlace copiado!" : "Copiar enlace al cálculo"}
+          </button>
+          <button
+            type="button"
+            onClick={resetForm}
+            className="rounded-lg px-4 py-3 text-sm font-medium text-ink-500 underline underline-offset-2 transition-colors hover:text-brand-700"
+          >
+            Limpiar
+          </button>
         </div>
+        <p className="text-xs text-ink-500">
+          El cálculo se hace en tu navegador: no enviamos ni guardamos tus datos.
+          El enlace guarda los datos que introduces en la propia dirección web,
+          para que puedas volver a tu simulación o compartirla.
+        </p>
       </form>
 
       <div

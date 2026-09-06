@@ -21,7 +21,7 @@ datos. Este repo empezó VACÍO: todo se construyó aquí desde cero.
 ```bash
 npm run dev / build / start
 npm run lint                  # ESLint (flat config: next/core-web-vitals + ts)
-npm test                      # 63 tests unitarios (motor + leads + OPAEF)
+npm test                      # 76 tests (motor, leads, OPAEF, parse, share, proyección)
 node scripts/smoke-e2e.mjs    # E2E en Chromium (requiere servidor en :3000;
                               # ejecutable en /opt/pw-browsers/chromium)
 ```
@@ -40,7 +40,11 @@ eso las páginas no lo declaran (og:title/description salen de title/desc).
   - `coefficients.ts` tablas estatales por fecha de devengo + prorrateo.
   - `engine.ts` cálculo (objetivo vs real, no sujeción, bonificaciones).
   - `realRights.ts` usufructos y nuda propiedad; `deadlines.ts` plazos y
-    recargos LGT; `data/municipalities.ts` datos por municipio.
+    recargos LGT (con reducción 25 % art. 27.5 e intereses de demora);
+    `data/municipalities.ts` datos por municipio.
+  - `parse.ts` importes es-ES; `share.ts` (de)serializa el formulario a la
+    URL (enlace compartible); `projection.ts` cuota objetiva por años de
+    tenencia; `errors.ts` `PlusvaliaInputError`.
 - `src/app/calculadora-plusvalia/page.tsx` — página principal (Sevilla).
 - `src/app/calculadora-plusvalia/[municipio]/page.tsx` — 105 páginas SSG
   por municipio de la provincia (SEO local). Sevilla capital NO tiene

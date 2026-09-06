@@ -49,6 +49,23 @@ describe("recargos por extemporaneidad (art. 27 LGT)", () => {
     expect(s.surchargeAmount).toBe(150);
     expect(s.interestNote).toBeTruthy();
   });
+
+  it("aplica la reducción del 25 % del recargo (art. 27.5 LGT)", () => {
+    const s = computeSurcharge("2025-01-10", "2025-03-15", 1000);
+    expect(s.surchargeAmount).toBe(30);
+    expect(s.reducedSurchargeAmount).toBe(22.5); // 30 × 0,75
+    expect(s.reductionNote).toMatch(/25 %|27\.5/);
+  });
+
+  it("calcula los intereses de demora desde el mes 12 hasta el pago", () => {
+    // Fin de plazo 10/01/2024; mes 12 → 10/01/2025; pago 10/04/2025 = 90 días.
+    const s = computeSurcharge("2024-01-10", "2025-04-10", 1000, 4);
+    expect(s.interestRate).toBe(4);
+    expect(s.interestDays).toBe(90);
+    // 1000 × 4 % × 90/365 ≈ 9,86 €
+    expect(s.interestAmount).toBeCloseTo(9.86, 2);
+    expect(s.reducedSurchargeAmount).toBe(112.5); // 150 × 0,75
+  });
   it("monthsBetween cuenta meses completos", () => {
     expect(monthsBetween("2025-01-31", "2025-02-28")).toBe(0);
     expect(monthsBetween("2025-01-10", "2025-02-10")).toBe(1);

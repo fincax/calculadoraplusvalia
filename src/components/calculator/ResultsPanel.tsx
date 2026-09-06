@@ -15,6 +15,7 @@ import {
   isOpaefManaged,
   OPAEF_SEDE_PLUSVALIA_URL,
 } from "@/lib/plusvalia/data/opaef";
+import { projectObjectiveTaxByYears } from "@/lib/plusvalia/projection";
 import LeadCapture from "./LeadCapture";
 
 function StepList({ steps }: { steps: CalculationStep[] }) {
@@ -82,6 +83,25 @@ export default function ResultsPanel({ result }: { result: CalculationResult }) 
   const r = result;
   const isNotSubject = r.outcome === "not_subject_no_gain";
   const isExempt = r.outcome === "possibly_exempt";
+
+  // Curva «¿cuándo me conviene vender?»: cuota objetiva por años de tenencia.
+  const projection =
+    r.outcome === "taxable" && r.input.cadastralValueLand > 0
+      ? projectObjectiveTaxByYears({
+          cadastralValueLand: r.input.cadastralValueLand,
+          effectiveSharePercentage: r.effectiveSharePercentage,
+          taxRate: r.rules.taxRate,
+          transferDateISO: r.input.transferDate,
+          municipalCoefficients:
+            r.rules.coefficientsMode === "municipal_custom"
+              ? r.rules.coefficients
+              : undefined,
+        })
+      : null;
+  const projectionMax = projection
+    ? Math.max(...projection.map((p) => p.tax), 0)
+    : 0;
+  const currentYears = r.coefficient.yearsHeld;
 
   return (
     <section
@@ -208,6 +228,85 @@ export default function ResultsPanel({ result }: { result: CalculationResult }) 
         )}
       </div>
 
+      {projection && (
+        <details className="mt-8 rounded-xl border border-ink-300 p-5">
+          <summary className="cursor-pointer text-lg font-semibold text-brand-900">
+            ¿Cuándo me conviene vender? Cuota objetiva por años de tenencia
+          </summary>
+          <p className="mt-2 text-sm text-ink-500">
+            Cuota por el método objetivo si la venta se produjera tras cada
+            número de años completos de tenencia, con el resto de datos igual.
+            Los coeficientes no crecen de forma lineal (art. 107.4 TRLHL), así
+            que esperar un año puede subir o bajar la cuota. No incluye el
+            método real, que depende del precio final de venta.
+          </p>
+          <div className="mt-4 overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-ink-300 text-left text-xs uppercase tracking-wide text-ink-500">
+                  <th scope="col" className="py-2 pr-4 font-semibold">
+                    Años de tenencia
+                  </th>
+                  <th scope="col" className="py-2 pr-4 font-semibold">
+                    Coeficiente
+                  </th>
+                  <th scope="col" className="py-2 font-semibold">
+                    Cuota objetiva
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {projection.map((p) => {
+                  const isCurrent = p.years === currentYears;
+                  return (
+                    <tr
+                      key={p.years}
+                      className={`border-b border-ink-100 ${
+                        isCurrent ? "bg-brand-50 font-semibold" : ""
+                      }`}
+                    >
+                      <td className="py-1.5 pr-4 text-ink-700">
+                        {p.years === 20 ? "20 o más" : p.years}
+                        {isCurrent && (
+                          <span className="ml-2 rounded-full bg-brand-700 px-2 py-0.5 text-[10px] font-semibold text-white">
+                            tu caso
+                          </span>
+                        )}
+                      </td>
+                      <td className="py-1.5 pr-4 tabular-nums text-ink-700">
+                        {formatNumber(p.coefficient, 2)}
+                      </td>
+                      <td className="py-1.5">
+                        <div className="flex items-center gap-2">
+                          <span className="w-24 whitespace-nowrap tabular-nums text-ink-900">
+                            {formatEUR(p.tax)}
+                          </span>
+                          <span
+                            aria-hidden="true"
+                            className="hidden h-2 rounded bg-brand-300 sm:block"
+                            style={{
+                              width: `${
+                                projectionMax > 0
+                                  ? Math.max(2, (p.tax / projectionMax) * 100)
+                                  : 0
+                              }%`,
+                            }}
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          <p className="mt-3 text-xs text-ink-500">
+            ¿Dudas sobre el mejor momento para vender? En FINCAX lo estudiamos
+            contigo.
+          </p>
+        </details>
+      )}
+
       {r.bonusesApplied.length > 0 && (
         <div className="mt-8 rounded-xl border border-brand-200 bg-brand-50 p-5">
           <h3 className="text-lg font-semibold text-brand-900">
@@ -307,14 +406,40 @@ export default function ResultsPanel({ result }: { result: CalculationResult }) 
           </h3>
           <p className="mt-2 text-sm text-ink-900">{r.surcharge.description}</p>
           {r.surcharge.applicable && r.surcharge.surchargeAmount !== undefined && (
-            <p className="mt-2 text-sm">
-              Recargo estimado:{" "}
-              <strong>{formatEUR(r.surcharge.surchargeAmount)}</strong> → total
-              con recargo:{" "}
-              <strong>
-                {formatEUR(r.finalTax + r.surcharge.surchargeAmount)}
-              </strong>
-            </p>
+            <>
+              <p className="mt-2 text-sm">
+                Recargo estimado:{" "}
+                <strong>{formatEUR(r.surcharge.surchargeAmount)}</strong>
+                {r.surcharge.interestAmount !== undefined &&
+                  r.surcharge.interestAmount > 0 && (
+                    <>
+                      {" "}
+                      + intereses de demora{" "}
+                      <strong>{formatEUR(r.surcharge.interestAmount)}</strong>
+                    </>
+                  )}{" "}
+                → total con recargo:{" "}
+                <strong>
+                  {formatEUR(
+                    r.finalTax +
+                      r.surcharge.surchargeAmount +
+                      (r.surcharge.interestAmount ?? 0)
+                  )}
+                </strong>
+              </p>
+              {r.surcharge.reducedSurchargeAmount !== undefined && (
+                <p className="mt-1 text-sm text-green-800">
+                  Con la reducción del 25 % (art. 27.5 LGT), el recargo baja a{" "}
+                  <strong>
+                    {formatEUR(r.surcharge.reducedSurchargeAmount)}
+                  </strong>
+                  .
+                </p>
+              )}
+            </>
+          )}
+          {r.surcharge.reductionNote && r.surcharge.applicable && (
+            <p className="mt-1 text-xs text-ink-500">{r.surcharge.reductionNote}</p>
           )}
           {r.surcharge.interestNote && (
             <p className="mt-1 text-xs text-ink-700">{r.surcharge.interestNote}</p>

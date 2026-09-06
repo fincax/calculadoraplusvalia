@@ -247,9 +247,15 @@ Ver 2.5. Añadir además un cuadro «Dónde se paga la plusvalía en X»
    unificado (errores concretos en la UI) y aviso por devengo futuro (2.8);
    además `/api/health` y verificación del despliegue en `deploy.sh`.
    63 tests en verde, lint/tipos/build limpios y E2E correcto.
-2. **Semana 2 (potencia)**: enlace compartible (4.1); curva por años
-   (4.2); reducción del 25 % e intereses (2.8); tests de `parseAmount`,
-   leads y E2E en CI (2.10); accesibilidad del foco y botón «Limpiar» (3).
+2. ✅ **Semana 2 (potencia) — COMPLETADA (06/09/2026)**: enlace compartible
+   con «Copiar enlace» y prefill desde la URL (4.1); curva «¿cuándo me
+   conviene vender?» por años de tenencia (4.2); recargo con reducción del
+   25 % (art. 27.5 LGT) e intereses de demora (2.8); `parseAmount`, `share` y
+   `projection` extraídos a módulos puros con tests, y **E2E en CI** con
+   Chromium de Playwright (2.10); foco visible en las tarjetas de tipo de
+   transmisión, botón «Limpiar» y `min` en la fecha (3). 76 tests en verde;
+   lint/tipos/build limpios; verificado en navegador (prefill, curva,
+   reducción/intereses, copiar y limpiar).
 3. **Continuo (datos)**: verificar ordenanzas de los 10 municipios más
    poblados con los PDFs que aporte el usuario (2.7) y enriquecer sus
    páginas (2.5, 4.8).
