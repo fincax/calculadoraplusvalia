@@ -16,6 +16,7 @@ import {
   OPAEF_SEDE_PLUSVALIA_URL,
 } from "@/lib/plusvalia/data/opaef";
 import { projectObjectiveTaxByYears } from "@/lib/plusvalia/projection";
+import { computeEquilibrium } from "@/lib/plusvalia/equilibrium";
 import LeadCapture from "./LeadCapture";
 
 function StepList({ steps }: { steps: CalculationStep[] }) {
@@ -79,10 +80,36 @@ function MethodCard({
   );
 }
 
-export default function ResultsPanel({ result }: { result: CalculationResult }) {
+export default function ResultsPanel({
+  result,
+  splitCount = 1,
+}: {
+  result: CalculationResult;
+  /** Nº de personas que adquieren a partes iguales (reparto de la cuota). */
+  splitCount?: number;
+}) {
   const r = result;
   const isNotSubject = r.outcome === "not_subject_no_gain";
   const isExempt = r.outcome === "possibly_exempt";
+
+  const split = Number.isFinite(splitCount) && splitCount > 1 ? Math.floor(splitCount) : 1;
+  const priceLabel =
+    r.input.transferType === "compraventa"
+      ? "precio de venta"
+      : "valor de transmisión";
+
+  // Cálculo inverso: a qué valor de transmisión cambia el resultado.
+  const equilibrium =
+    r.outcome === "taxable" && r.input.cadastralValueTotal > 0
+      ? computeEquilibrium({
+          acquisitionValue: r.input.acquisitionValue,
+          cadastralValueLand: r.input.cadastralValueLand,
+          cadastralValueTotal: r.input.cadastralValueTotal,
+          effectiveSharePercentage: r.effectiveSharePercentage,
+          taxRate: r.rules.taxRate,
+          objectiveGrossTax: r.objectiveMethod.grossTax,
+        })
+      : null;
 
   // Curva «¿cuándo me conviene vender?»: cuota objetiva por años de tenencia.
   const projection =
@@ -176,6 +203,17 @@ export default function ResultsPanel({ result }: { result: CalculationResult }) 
                 </>
               )}
             </p>
+            {split > 1 && (
+              <p className="mt-3 border-t border-brand-700 pt-3 text-sm text-brand-100">
+                Si lo adquieren <strong>{split}</strong> personas a partes
+                iguales:{" "}
+                <strong className="text-white">
+                  {formatEUR(r.finalTax / split)}
+                </strong>{" "}
+                por persona (cada una autoliquida su parte; las bonificaciones
+                dependen de que cada adquirente cumpla los requisitos).
+              </p>
+            )}
           </div>
         )}
       </header>
@@ -305,6 +343,37 @@ export default function ResultsPanel({ result }: { result: CalculationResult }) 
             contigo.
           </p>
         </details>
+      )}
+
+      {equilibrium && (
+        <div className="mt-6 rounded-xl border border-ink-300 p-5">
+          <h3 className="text-lg font-semibold text-brand-900">
+            ¿A qué {priceLabel} cambia el resultado?
+          </h3>
+          <ul className="mt-3 space-y-2 text-sm text-ink-700">
+            <li>
+              Con un {priceLabel} de{" "}
+              <strong>{formatEUR(equilibrium.nonSubjectPrice)}</strong> o menos
+              no habría incremento de valor: la operación{" "}
+              <strong>no estaría sujeta</strong> (no pagarías), acreditándolo
+              con las escrituras (art. 104.5 TRLHL).
+            </li>
+            {equilibrium.breakEvenPrice !== undefined && (
+              <li>
+                A partir de{" "}
+                <strong>{formatEUR(equilibrium.breakEvenPrice)}</strong> el
+                método objetivo pasa a ser el más favorable y la cuota queda
+                topada en <strong>{formatEUR(equilibrium.objectiveGrossTax)}</strong>{" "}
+                (por debajo, el método real da una cuota proporcional al
+                beneficio).
+              </li>
+            )}
+          </ul>
+          <p className="mt-3 text-xs text-ink-500">
+            Estimación manteniendo el resto de datos (valores catastrales,
+            titularidad y fecha) constantes.
+          </p>
+        </div>
       )}
 
       {r.bonusesApplied.length > 0 && (

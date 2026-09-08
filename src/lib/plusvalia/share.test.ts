@@ -25,6 +25,7 @@ const full: ShareState = {
   isDacionEnPago: false,
   showLateFiling: false,
   filingDate: "",
+  numberOfAcquirers: "3",
 };
 
 describe("encode/decode del enlace compartible", () => {
@@ -41,6 +42,7 @@ describe("encode/decode del enlace compartible", () => {
     expect(back.usufructuaryAge).toBe("70");
     expect(back.isPrimaryResidenceOfDeceased).toBe(true);
     expect(back.isCloseRelative).toBe(true);
+    expect(back.numberOfAcquirers).toBe("3");
   });
 
   it("omite los valores por defecto (compraventa, pleno dominio, 100 %)", () => {

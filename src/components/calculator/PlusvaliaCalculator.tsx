@@ -44,6 +44,7 @@ const initialState: FormState = {
   isDacionEnPago: false,
   showLateFiling: false,
   filingDate: "",
+  numberOfAcquirers: "1",
 };
 
 const transferTypeLabels: Record<TransferType, { label: string; hint: string }> =
@@ -514,6 +515,20 @@ export default function PlusvaliaCalculator({
           </Field>
 
           <Field
+            id="num-adquirentes"
+            label="Personas que adquieren (opcional)"
+            help="Si heredan o compran varias personas a partes iguales, repartimos la cuota entre ellas."
+          >
+            <input
+              id="num-adquirentes"
+              inputMode="numeric"
+              className={inputClass}
+              value={form.numberOfAcquirers}
+              onChange={(e) => set("numberOfAcquirers", e.target.value)}
+            />
+          </Field>
+
+          <Field
             id="derecho"
             label="Derecho transmitido"
             help="El usufructo y la nuda propiedad se valoran según la edad del usufructuario o la duración del derecho."
@@ -687,7 +702,12 @@ export default function PlusvaliaCalculator({
         aria-live="polite"
         className="scroll-mt-6 outline-none"
       >
-        {result && <ResultsPanel result={result} />}
+        {result && (
+          <ResultsPanel
+            result={result}
+            splitCount={Number(form.numberOfAcquirers) || 1}
+          />
+        )}
       </div>
     </>
   );

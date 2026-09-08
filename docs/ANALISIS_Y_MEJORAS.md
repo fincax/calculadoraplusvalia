@@ -256,11 +256,15 @@ Ver 2.5. Añadir además un cuadro «Dónde se paga la plusvalía en X»
    transmisión, botón «Limpiar» y `min` en la fecha (3). 76 tests en verde;
    lint/tipos/build limpios; verificado en navegador (prefill, curva,
    reducción/intereses, copiar y limpiar).
-3. **Continuo (datos)**: verificar ordenanzas de los 10 municipios más
-   poblados con los PDFs que aporte el usuario (2.7) y enriquecer sus
-   páginas (2.5, 4.8).
-4. **Después**: informe por email (4.5), analítica sin cookies (4.7),
-   cálculo inverso (4.3), reparto entre herederos (4.6), CSP (2.9).
+3. **Continuo (datos) — PENDIENTE (bloqueado en PDFs del usuario)**:
+   verificar ordenanzas de los 10 municipios más poblados con los PDFs que
+   aporte el usuario (2.7) y enriquecer sus páginas (2.5, 4.8).
+4. ✅ **Después — PARCIALMENTE COMPLETADA (08/09/2026)**: cálculo inverso
+   —precio de no sujeción y de equilibrio— (4.3), reparto entre varios
+   adquirentes/herederos (4.6) y CSP + HSTS (2.9) hechos y verificados
+   (80 tests, E2E con CSP sin violaciones). Quedan para cuando el usuario
+   tenga infraestructura: informe por email como imán de leads (4.5) y
+   analítica sin cookies autoalojada (4.7).
 
 ## 6. Pendientes del lado del usuario (sin cambios)
 

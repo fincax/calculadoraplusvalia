@@ -27,6 +27,8 @@ export interface ShareState {
   isDacionEnPago: boolean;
   showLateFiling: boolean;
   filingDate: string;
+  /** Nº de personas que adquieren a partes iguales (reparto de la cuota). */
+  numberOfAcquirers: string;
 }
 
 // Campos de ShareState cuyo tipo es exactamente `string` (no una unión de
@@ -55,6 +57,7 @@ const STRING_KEYS: Array<[StringField, string]> = [
   ["usufructuaryAge", "ua"],
   ["usufructDurationYears", "ud"],
   ["filingDate", "fd"],
+  ["numberOfAcquirers", "np"],
 ];
 const BOOL_KEYS: Array<[BoolField, string]> = [
   ["isPrimaryResidenceOfDeceased", "pr"],
@@ -82,6 +85,7 @@ export function encodeShareParams(state: ShareState): string {
     // No incluimos titularidad al 100 % (valor por defecto) para acortar.
     if (!v) continue;
     if (field === "ownershipPercentage" && v === "100") continue;
+    if (field === "numberOfAcquirers" && v === "1") continue;
     p.set(key, v);
   }
   if (state.transferType !== "compraventa") p.set("t", state.transferType);
@@ -107,6 +111,8 @@ export function decodeShareParams(search: string): Partial<ShareState> {
     if (v === null) continue;
     if (field === "acquisitionDate" || field === "transferDate" || field === "filingDate") {
       if (DATE_RE.test(v)) out[field] = v;
+    } else if (field === "numberOfAcquirers") {
+      if (/^\d{1,2}$/.test(v) && Number(v) >= 1) out[field] = v;
     } else if (
       field === "acquisitionValue" ||
       field === "transferValue" ||
