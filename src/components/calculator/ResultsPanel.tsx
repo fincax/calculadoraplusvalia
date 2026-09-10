@@ -11,6 +11,12 @@ import {
   formatNumber,
   formatPct,
 } from "@/lib/plusvalia/format";
+import {
+  isOpaefManaged,
+  OPAEF_SEDE_PLUSVALIA_URL,
+} from "@/lib/plusvalia/data/opaef";
+import { projectObjectiveTaxByYears } from "@/lib/plusvalia/projection";
+import { computeEquilibrium } from "@/lib/plusvalia/equilibrium";
 import LeadCapture from "./LeadCapture";
 
 function StepList({ steps }: { steps: CalculationStep[] }) {
@@ -74,10 +80,55 @@ function MethodCard({
   );
 }
 
-export default function ResultsPanel({ result }: { result: CalculationResult }) {
+export default function ResultsPanel({
+  result,
+  splitCount = 1,
+}: {
+  result: CalculationResult;
+  /** Nº de personas que adquieren a partes iguales (reparto de la cuota). */
+  splitCount?: number;
+}) {
   const r = result;
   const isNotSubject = r.outcome === "not_subject_no_gain";
   const isExempt = r.outcome === "possibly_exempt";
+
+  const split = Number.isFinite(splitCount) && splitCount > 1 ? Math.floor(splitCount) : 1;
+  const priceLabel =
+    r.input.transferType === "compraventa"
+      ? "precio de venta"
+      : "valor de transmisión";
+
+  // Cálculo inverso: a qué valor de transmisión cambia el resultado.
+  const equilibrium =
+    r.outcome === "taxable" && r.input.cadastralValueTotal > 0
+      ? computeEquilibrium({
+          acquisitionValue: r.input.acquisitionValue,
+          cadastralValueLand: r.input.cadastralValueLand,
+          cadastralValueTotal: r.input.cadastralValueTotal,
+          effectiveSharePercentage: r.effectiveSharePercentage,
+          taxRate: r.rules.taxRate,
+          objectiveGrossTax: r.objectiveMethod.grossTax,
+        })
+      : null;
+
+  // Curva «¿cuándo me conviene vender?»: cuota objetiva por años de tenencia.
+  const projection =
+    r.outcome === "taxable" && r.input.cadastralValueLand > 0
+      ? projectObjectiveTaxByYears({
+          cadastralValueLand: r.input.cadastralValueLand,
+          effectiveSharePercentage: r.effectiveSharePercentage,
+          taxRate: r.rules.taxRate,
+          transferDateISO: r.input.transferDate,
+          municipalCoefficients:
+            r.rules.coefficientsMode === "municipal_custom"
+              ? r.rules.coefficients
+              : undefined,
+        })
+      : null;
+  const projectionMax = projection
+    ? Math.max(...projection.map((p) => p.tax), 0)
+    : 0;
+  const currentYears = r.coefficient.yearsHeld;
 
   return (
     <section
@@ -152,6 +203,17 @@ export default function ResultsPanel({ result }: { result: CalculationResult }) 
                 </>
               )}
             </p>
+            {split > 1 && (
+              <p className="mt-3 border-t border-brand-700 pt-3 text-sm text-brand-100">
+                Si lo adquieren <strong>{split}</strong> personas a partes
+                iguales:{" "}
+                <strong className="text-white">
+                  {formatEUR(r.finalTax / split)}
+                </strong>{" "}
+                por persona (cada una autoliquida su parte; las bonificaciones
+                dependen de que cada adquirente cumpla los requisitos).
+              </p>
+            )}
           </div>
         )}
       </header>
@@ -203,6 +265,116 @@ export default function ResultsPanel({ result }: { result: CalculationResult }) 
           </p>
         )}
       </div>
+
+      {projection && (
+        <details className="mt-8 rounded-xl border border-ink-300 p-5">
+          <summary className="cursor-pointer text-lg font-semibold text-brand-900">
+            ¿Cuándo me conviene vender? Cuota objetiva por años de tenencia
+          </summary>
+          <p className="mt-2 text-sm text-ink-500">
+            Cuota por el método objetivo si la venta se produjera tras cada
+            número de años completos de tenencia, con el resto de datos igual.
+            Los coeficientes no crecen de forma lineal (art. 107.4 TRLHL), así
+            que esperar un año puede subir o bajar la cuota. No incluye el
+            método real, que depende del precio final de venta.
+          </p>
+          <div className="mt-4 overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-ink-300 text-left text-xs uppercase tracking-wide text-ink-500">
+                  <th scope="col" className="py-2 pr-4 font-semibold">
+                    Años de tenencia
+                  </th>
+                  <th scope="col" className="py-2 pr-4 font-semibold">
+                    Coeficiente
+                  </th>
+                  <th scope="col" className="py-2 font-semibold">
+                    Cuota objetiva
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {projection.map((p) => {
+                  const isCurrent = p.years === currentYears;
+                  return (
+                    <tr
+                      key={p.years}
+                      className={`border-b border-ink-100 ${
+                        isCurrent ? "bg-brand-50 font-semibold" : ""
+                      }`}
+                    >
+                      <td className="py-1.5 pr-4 text-ink-700">
+                        {p.years === 20 ? "20 o más" : p.years}
+                        {isCurrent && (
+                          <span className="ml-2 rounded-full bg-brand-700 px-2 py-0.5 text-[10px] font-semibold text-white">
+                            tu caso
+                          </span>
+                        )}
+                      </td>
+                      <td className="py-1.5 pr-4 tabular-nums text-ink-700">
+                        {formatNumber(p.coefficient, 2)}
+                      </td>
+                      <td className="py-1.5">
+                        <div className="flex items-center gap-2">
+                          <span className="w-24 whitespace-nowrap tabular-nums text-ink-900">
+                            {formatEUR(p.tax)}
+                          </span>
+                          <span
+                            aria-hidden="true"
+                            className="hidden h-2 rounded bg-brand-300 sm:block"
+                            style={{
+                              width: `${
+                                projectionMax > 0
+                                  ? Math.max(2, (p.tax / projectionMax) * 100)
+                                  : 0
+                              }%`,
+                            }}
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          <p className="mt-3 text-xs text-ink-500">
+            ¿Dudas sobre el mejor momento para vender? En FINCAX lo estudiamos
+            contigo.
+          </p>
+        </details>
+      )}
+
+      {equilibrium && (
+        <div className="mt-6 rounded-xl border border-ink-300 p-5">
+          <h3 className="text-lg font-semibold text-brand-900">
+            ¿A qué {priceLabel} cambia el resultado?
+          </h3>
+          <ul className="mt-3 space-y-2 text-sm text-ink-700">
+            <li>
+              Con un {priceLabel} de{" "}
+              <strong>{formatEUR(equilibrium.nonSubjectPrice)}</strong> o menos
+              no habría incremento de valor: la operación{" "}
+              <strong>no estaría sujeta</strong> (no pagarías), acreditándolo
+              con las escrituras (art. 104.5 TRLHL).
+            </li>
+            {equilibrium.breakEvenPrice !== undefined && (
+              <li>
+                A partir de{" "}
+                <strong>{formatEUR(equilibrium.breakEvenPrice)}</strong> el
+                método objetivo pasa a ser el más favorable y la cuota queda
+                topada en <strong>{formatEUR(equilibrium.objectiveGrossTax)}</strong>{" "}
+                (por debajo, el método real da una cuota proporcional al
+                beneficio).
+              </li>
+            )}
+          </ul>
+          <p className="mt-3 text-xs text-ink-500">
+            Estimación manteniendo el resto de datos (valores catastrales,
+            titularidad y fecha) constantes.
+          </p>
+        </div>
+      )}
 
       {r.bonusesApplied.length > 0 && (
         <div className="mt-8 rounded-xl border border-brand-200 bg-brand-50 p-5">
@@ -261,6 +433,21 @@ export default function ResultsPanel({ result }: { result: CalculationResult }) 
               plazo.
             </p>
           )}
+          {isOpaefManaged(r.rules.municipalityCode) && (
+            <p className="mt-2 text-xs text-ink-500">
+              La gestión está delegada en el OPAEF (Diputación de Sevilla);
+              desde el 02/09/2024 se presenta por autoliquidación en su{" "}
+              <a
+                href={OPAEF_SEDE_PLUSVALIA_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-brand-700"
+              >
+                sede electrónica
+              </a>
+              .
+            </p>
+          )}
         </div>
 
         <div className="rounded-xl border border-ink-300 p-5">
@@ -288,14 +475,40 @@ export default function ResultsPanel({ result }: { result: CalculationResult }) 
           </h3>
           <p className="mt-2 text-sm text-ink-900">{r.surcharge.description}</p>
           {r.surcharge.applicable && r.surcharge.surchargeAmount !== undefined && (
-            <p className="mt-2 text-sm">
-              Recargo estimado:{" "}
-              <strong>{formatEUR(r.surcharge.surchargeAmount)}</strong> → total
-              con recargo:{" "}
-              <strong>
-                {formatEUR(r.finalTax + r.surcharge.surchargeAmount)}
-              </strong>
-            </p>
+            <>
+              <p className="mt-2 text-sm">
+                Recargo estimado:{" "}
+                <strong>{formatEUR(r.surcharge.surchargeAmount)}</strong>
+                {r.surcharge.interestAmount !== undefined &&
+                  r.surcharge.interestAmount > 0 && (
+                    <>
+                      {" "}
+                      + intereses de demora{" "}
+                      <strong>{formatEUR(r.surcharge.interestAmount)}</strong>
+                    </>
+                  )}{" "}
+                → total con recargo:{" "}
+                <strong>
+                  {formatEUR(
+                    r.finalTax +
+                      r.surcharge.surchargeAmount +
+                      (r.surcharge.interestAmount ?? 0)
+                  )}
+                </strong>
+              </p>
+              {r.surcharge.reducedSurchargeAmount !== undefined && (
+                <p className="mt-1 text-sm text-green-800">
+                  Con la reducción del 25 % (art. 27.5 LGT), el recargo baja a{" "}
+                  <strong>
+                    {formatEUR(r.surcharge.reducedSurchargeAmount)}
+                  </strong>
+                  .
+                </p>
+              )}
+            </>
+          )}
+          {r.surcharge.reductionNote && r.surcharge.applicable && (
+            <p className="mt-1 text-xs text-ink-500">{r.surcharge.reductionNote}</p>
           )}
           {r.surcharge.interestNote && (
             <p className="mt-1 text-xs text-ink-700">{r.surcharge.interestNote}</p>
@@ -344,10 +557,20 @@ export default function ResultsPanel({ result }: { result: CalculationResult }) 
       <div className="no-print mt-6 flex flex-wrap gap-3">
         <button
           type="button"
+          onClick={async () => {
+            const { downloadPdfReport } = await import("./downloadReport");
+            downloadPdfReport(r);
+          }}
+          className="rounded-lg bg-brand-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-800"
+        >
+          Descargar informe en PDF
+        </button>
+        <button
+          type="button"
           onClick={() => window.print()}
           className="rounded-lg border border-brand-700 px-5 py-2.5 text-sm font-semibold text-brand-700 transition-colors hover:bg-brand-50"
         >
-          Imprimir o guardar en PDF
+          Imprimir
         </button>
       </div>
 

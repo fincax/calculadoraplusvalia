@@ -42,6 +42,44 @@ La calculadora distingue dos niveles de calidad de datos por municipio
 > completos en periodos inferiores a un año** (art. 107.4 TRLHL, párr. 3.º),
 > que el motor aplica desde entonces.
 
+## Gestión del impuesto: el OPAEF (Diputación de Sevilla)
+
+Dato de **procedimiento**, no de cuantía. Desde el **2 de septiembre de
+2024**, el OPAEF gestiona la plusvalía municipal por **autoliquidación** en
+**85 de los 106 municipios** de la provincia (81,13 %), tras modificar su
+Ordenanza General de Gestión, Recaudación e Inspección (BOP de Sevilla de
+30/08/2024). El resto —entre ellos **Sevilla capital**, con su Agencia
+Tributaria de Sevilla— gestionan el impuesto por su cuenta.
+
+**Clave:** el OPAEF unifica cómo se presenta y se paga, **no** el tipo de
+gravamen, los coeficientes ni las bonificaciones, que los sigue fijando cada
+ayuntamiento en su ordenanza. Por eso este dato **no altera el cálculo**: la
+calculadora sigue estimando por máximos legales donde la ordenanza no está
+verificada. Solo se usa para informar a la persona usuaria de dónde y cómo
+presentar (con enlace a la sede del OPAEF).
+
+Implementación: `src/lib/plusvalia/data/opaef.ts` clasifica cada municipio
+como `opaef` (delegación constatada en fuentes), `municipal` (agencia propia,
+p. ej. Sevilla) o `unknown` (a confirmar; la UI lo comunica con prudencia).
+Los municipios `opaef` confirmados pasan a `administrationMode:
+"self_assessment"`.
+
+- Lista confirmada `opaef` (ampliar según BOP 30/08/2024): Aguadulce, Alanís,
+  Albaida del Aljarafe, Alcalá del Río, Alcolea del Río, La Algaba, Algámitas,
+  Almadén de la Plata, Almensilla, Aznalcázar, Aznalcóllar, Badolatosa,
+  Benacazón, Bollullos de la Mitación, Brenes, Burguillos, Las Cabezas de San
+  Juan, Mairena del Alcor.
+- Fuente: [Diputación de Sevilla — «El OPAEF implanta el sistema de
+  autoliquidación en la gestión de las plusvalías municipales» (30/08/2024)](https://www.dipusevilla.es/comunicacion/noticias/El-OPAEF-implanta-el-sistema-de-autoliquidacion-en-la-gestion-de-las-plusvalias-municipales/)
+  y BOP de Sevilla de 30/08/2024.
+- **Pendiente (lado usuario):** aportar el PDF del BOP de 30/08/2024 con la
+  lista completa de los 85 municipios para completar la clasificación con
+  exactitud.
+
+> Nota: el proxy de red del entorno bloquea `dipusevilla.es` y `opaef.es`
+> (solo funciona WebSearch), así que la lista completa no pudo descargarse
+> del BOP; se marcaron `opaef` solo los municipios citados en las fuentes.
+
 ## Cómo verificar un municipio (proceso)
 
 1. Localiza la ordenanza fiscal del IIVTNU vigente (web municipal o BOP).

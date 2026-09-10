@@ -60,6 +60,19 @@ export default function PrivacidadPage() {
           (aepd.es).
         </li>
       </ul>
+
+      <h2 className="mt-8 text-xl font-semibold text-brand-900">
+        Medición de uso de la calculadora embebida
+      </h2>
+      <p className="mt-2">
+        Cuando la calculadora se integra en la web de un tercero, FINCAX realiza
+        una medición propia y agregada de su uso, <strong>sin cookies</strong> y
+        sin recoger datos personales ni los importes que introduces. Solo se
+        registra el tipo de evento (una vista o un cálculo), el municipio
+        seleccionado y el dominio de la web que la integra, con el fin de conocer
+        el uso del servicio por parte de los sitios colaboradores. Estos datos no
+        permiten identificarte y no se ceden a terceros.
+      </p>
     </div>
   );
 }

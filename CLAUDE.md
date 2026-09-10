@@ -20,10 +20,16 @@ datos. Este repo empezó VACÍO: todo se construyó aquí desde cero.
 
 ```bash
 npm run dev / build / start
-npm test                      # 43 tests unitarios del motor
+npm run lint                  # ESLint (flat config: next/core-web-vitals + ts)
+npm test                      # 86 tests (motor, leads, OPAEF, parse, share, proyección, equilibrio, embed)
 node scripts/smoke-e2e.mjs    # E2E en Chromium (requiere servidor en :3000;
                               # ejecutable en /opt/pw-browsers/chromium)
 ```
+
+Node 22 LTS (ver `.nvmrc` y `engines`). Iconos y Open Graph generados por
+Next (`src/app/icon.svg`, `apple-icon.tsx`, `opengraph-image.tsx`):
+declarar `openGraph` en una página SUPRIME la imagen del fichero global, por
+eso las páginas no lo declaran (og:title/description salen de title/desc).
 
 ## Arquitectura (regla de oro: motor desacoplado de la UI)
 
@@ -34,11 +40,29 @@ node scripts/smoke-e2e.mjs    # E2E en Chromium (requiere servidor en :3000;
   - `coefficients.ts` tablas estatales por fecha de devengo + prorrateo.
   - `engine.ts` cálculo (objetivo vs real, no sujeción, bonificaciones).
   - `realRights.ts` usufructos y nuda propiedad; `deadlines.ts` plazos y
-    recargos LGT; `data/municipalities.ts` datos por municipio.
-- `src/app/calculadora-plusvalia/page.tsx` — página principal (Sevilla).
-- `src/app/calculadora-plusvalia/[municipio]/page.tsx` — 105 páginas SSG
+    recargos LGT (con reducción 25 % art. 27.5 e intereses de demora);
+    `data/municipalities.ts` datos por municipio.
+  - `parse.ts` importes es-ES; `share.ts` (de)serializa el formulario a la
+    URL (enlace compartible); `projection.ts` cuota objetiva por años de
+    tenencia; `equilibrium.ts` cálculo inverso (precio de no sujeción y de
+    equilibrio); `errors.ts` `PlusvaliaInputError`.
+- Seguridad: cabeceras en `next.config.ts` (CSP de origen propio con inline
+  permitido por el arranque de Next, HSTS, nosniff, X-Frame-Options DENY,
+  Referrer-Policy, Permissions-Policy).
+- Layout: grupo `(site)` con la cabecera/pie; el root (`app/layout.tsx`) es
+  mínimo para que la versión embebible NO herede el «chrome».
+- `src/app/(site)/calculadora-plusvalia/page.tsx` — página principal (Sevilla).
+- `src/app/(site)/calculadora-plusvalia/[municipio]/page.tsx` — 105 páginas SSG
   por municipio de la provincia (SEO local). Sevilla capital NO tiene
   página propia: vive en la principal para no canibalizar la consulta.
+- **Embebible** (integrar en webs de terceros; ver `docs/EMBEBER.md`):
+  `src/app/embed/calculadora-plusvalia/…` (sin chrome, `frame-ancestors *`),
+  `public/embed.js` (iframe responsivo), `EmbedCalculator` (postMessage de
+  alto + seguimiento). Informe PDF descargable: `downloadReport.ts` (jsPDF).
+- **Seguimiento propio y panel**: `/api/embed-event` guarda eventos (vista/
+  cálculo + municipio + dominio anfitrión, sin cookies) en `EMBED_LOG_FILE`;
+  `/panel` (protegido por `src/middleware.ts` con PANEL_USER/PANEL_PASS) los
+  muestra. Lógica en `src/lib/track/`.
 - `src/app/api/lead/route.ts` — leads (rate-limit; reenvía a
   `LEAD_WEBHOOK_URL` si existe, si no los deja en el log).
 - Extender a nuevos municipios/años = añadir registros de datos. NUNCA
@@ -70,6 +94,13 @@ para verificar uno). Resumen:
   comunicado en la UI como cota superior. NO inventar tipos municipales:
   o fuente primaria o máximos. Datos pre-reforma (p. ej. Dos Hermanas
   25,16 % de 2016) NO sirven.
+- **OPAEF (procedimiento, no cuantía)**: desde el 02/09/2024 el OPAEF
+  (Diputación de Sevilla) gestiona la plusvalía por autoliquidación en 85
+  de los 106 municipios (BOP 30/08/2024). Unifica CÓMO se presenta/paga, no
+  el tipo/coeficientes/bonificaciones (los fija cada ordenanza). No cambia
+  el cálculo; solo informa dónde pagar. Clasificación en
+  `src/lib/plusvalia/data/opaef.ts` (`opaef`/`municipal`/`unknown`);
+  detalle y lista confirmada en `docs/VERIFICACION_DATOS.md`.
 
 ## Entorno remoto: limitación de red importante
 
@@ -116,10 +147,21 @@ le pide (¡pedírselos es la vía para desbloquear datos!).
    subdominio); opciones A/B documentadas en la guía.
 3. Secrets SSH en GitHub Actions (sección 6) → activa el deploy automático.
 4. `.env` de producción: `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_WHATSAPP_NUMBER`
-   (activa el botón de WhatsApp), `LEAD_WEBHOOK_URL` (destino de leads).
+   (activa el botón de WhatsApp) y el destino de leads. Los leads se entregan
+   por varias vías redundantes (ver `.env.example`): email SMTP
+   (`LEAD_SMTP_*` + `LEAD_TO`; con Gmail, contraseña de aplicación), copia en
+   fichero (`LEAD_LOG_FILE`, por defecto `leads.jsonl`) y/o `LEAD_WEBHOOK_URL`.
+   Basta configurar UNA para no perder ningún contacto.
 5. SEO off-page: Search Console (sitemap + indexación), enlace desde la
    home de fincax.es (tarjeta redactada en `docs/DESPLIEGUE.md`), Google
    Business Profile, nota de prensa local, enlaces de gestorías/abogados.
+6. Aportar el PDF del BOP de Sevilla de 30/08/2024 con la lista completa de
+   los 85 municipios cuya plusvalía gestiona el OPAEF, para completar con
+   exactitud la clasificación de `src/lib/plusvalia/data/opaef.ts`.
+7. Para el embebido y su panel: definir `PANEL_USER`/`PANEL_PASS` (y opcional
+   `EMBED_LOG_FILE`) en el `.env` de producción, y difundir el snippet de
+   integración (`docs/EMBEBER.md`) a gestorías, abogados y otras webs del
+   sector para captar tráfico hacia la calculadora.
 
 ## SEO (plan y estado)
 

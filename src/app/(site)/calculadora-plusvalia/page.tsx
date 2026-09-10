@@ -4,18 +4,18 @@ import PlusvaliaCalculator from "@/components/calculator/PlusvaliaCalculator";
 import CoefficientTable from "@/components/CoefficientTable";
 import { listMunicipalities } from "@/lib/plusvalia/data/municipalities";
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://fincax.es";
+
 export const metadata: Metadata = {
   title:
     "Calcular la Plusvalía Municipal en Sevilla — Calculadora gratuita 2026",
   description:
     "Calcula la plusvalía municipal (IIVTNU) en Sevilla y provincia en 1 minuto: método objetivo vs. real, tabla de coeficientes 2026, bonificaciones y detección de no sujeción si vendes con pérdidas. Gratis, sin registro y con la ordenanza de Sevilla verificada.",
   alternates: { canonical: "/calculadora-plusvalia" },
-  openGraph: {
-    title:
-      "Calcular la Plusvalía Municipal en Sevilla — Calculadora gratuita | FINCAX",
-    description:
-      "Calcula la plusvalía municipal en Sevilla y provincia: método objetivo vs. incremento real, bonificaciones, plazos y recargos. Gratis y sin registro.",
-  },
+  // Nota: no se define `openGraph` aquí a propósito. Declararlo haría que
+  // Next.js dejara de aplicar la imagen del fichero `opengraph-image.tsx`;
+  // el título y la descripción de Open Graph se derivan de `title`/
+  // `description`, y la imagen la aporta el convention file global.
 };
 
 const faqs = [
@@ -50,17 +50,29 @@ export default function CalculadoraPlusvaliaPage() {
     "@context": "https://schema.org",
     "@graph": [
       {
+        "@type": "RealEstateAgent",
+        "@id": `${SITE_URL}/#organization`,
+        name: "FINCAX",
+        url: "https://fincax.es",
+        email: "fincaxsevilla@gmail.com",
+        address: {
+          "@type": "PostalAddress",
+          streetAddress: "Ronda de Triana 14E",
+          addressLocality: "Sevilla",
+          addressRegion: "Sevilla",
+          postalCode: "41010",
+          addressCountry: "ES",
+        },
+        areaServed: "Sevilla y provincia, España",
+      },
+      {
         "@type": "WebApplication",
         name: "Calculadora de Plusvalía Municipal (IIVTNU)",
-        url: "/calculadora-plusvalia",
+        url: `${SITE_URL}/calculadora-plusvalia`,
         applicationCategory: "FinanceApplication",
         operatingSystem: "Web",
         offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
-        provider: {
-          "@type": "Organization",
-          name: "FINCAX",
-          url: "https://fincax.es",
-        },
+        provider: { "@id": `${SITE_URL}/#organization` },
         areaServed: "Sevilla y provincia, España",
         inLanguage: "es",
       },

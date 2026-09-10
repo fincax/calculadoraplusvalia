@@ -1,3 +1,4 @@
+import { PlusvaliaInputError } from "./errors";
 import type { RealRightInput } from "./types";
 
 /**
@@ -68,7 +69,7 @@ export function temporalUsufructPercentage(years: number): number {
 
 function requireAge(age?: number): number {
   if (age === undefined || !Number.isFinite(age) || age < 0 || age > 130) {
-    throw new Error(
+    throw new PlusvaliaInputError(
       "Para valorar un usufructo vitalicio se necesita la edad del usufructuario."
     );
   }
@@ -77,7 +78,7 @@ function requireAge(age?: number): number {
 
 function requireDuration(years?: number): number {
   if (years === undefined || !Number.isFinite(years) || years <= 0) {
-    throw new Error(
+    throw new PlusvaliaInputError(
       "Para valorar un usufructo temporal se necesita su duración en años."
     );
   }

@@ -5,13 +5,18 @@
  * Uso: npm run build && npm start &  (servidor en :3000)
  *      node scripts/smoke-e2e.mjs [ruta-ejecutable-chromium]
  */
+import { existsSync } from "node:fs";
 import { chromium } from "playwright-core";
 
-const executablePath =
+// En este entorno remoto el ejecutable está en /opt/pw-browsers/chromium; en
+// CI se instala con `npx playwright install chromium` y Playwright lo resuelve
+// solo (sin executablePath). Usamos la ruta explícita únicamente si existe.
+const candidate =
   process.argv[2] ?? process.env.CHROMIUM_PATH ?? "/opt/pw-browsers/chromium";
 const BASE = process.env.BASE_URL ?? "http://localhost:3000";
 
-const browser = await chromium.launch({ executablePath });
+const launchOptions = existsSync(candidate) ? { executablePath: candidate } : {};
+const browser = await chromium.launch(launchOptions);
 try {
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   await page.goto(`${BASE}/calculadora-plusvalia`, { waitUntil: "networkidle" });
