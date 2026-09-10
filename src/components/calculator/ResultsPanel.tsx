@@ -557,10 +557,20 @@ export default function ResultsPanel({
       <div className="no-print mt-6 flex flex-wrap gap-3">
         <button
           type="button"
+          onClick={async () => {
+            const { downloadPdfReport } = await import("./downloadReport");
+            downloadPdfReport(r);
+          }}
+          className="rounded-lg bg-brand-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-800"
+        >
+          Descargar informe en PDF
+        </button>
+        <button
+          type="button"
           onClick={() => window.print()}
           className="rounded-lg border border-brand-700 px-5 py-2.5 text-sm font-semibold text-brand-700 transition-colors hover:bg-brand-50"
         >
-          Imprimir o guardar en PDF
+          Imprimir
         </button>
       </div>
 
