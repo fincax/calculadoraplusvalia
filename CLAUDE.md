@@ -21,7 +21,7 @@ datos. Este repo empezó VACÍO: todo se construyó aquí desde cero.
 ```bash
 npm run dev / build / start
 npm run lint                  # ESLint (flat config: next/core-web-vitals + ts)
-npm test                      # 80 tests (motor, leads, OPAEF, parse, share, proyección, equilibrio)
+npm test                      # 86 tests (motor, leads, OPAEF, parse, share, proyección, equilibrio, embed)
 node scripts/smoke-e2e.mjs    # E2E en Chromium (requiere servidor en :3000;
                               # ejecutable en /opt/pw-browsers/chromium)
 ```
@@ -49,10 +49,20 @@ eso las páginas no lo declaran (og:title/description salen de title/desc).
 - Seguridad: cabeceras en `next.config.ts` (CSP de origen propio con inline
   permitido por el arranque de Next, HSTS, nosniff, X-Frame-Options DENY,
   Referrer-Policy, Permissions-Policy).
-- `src/app/calculadora-plusvalia/page.tsx` — página principal (Sevilla).
-- `src/app/calculadora-plusvalia/[municipio]/page.tsx` — 105 páginas SSG
+- Layout: grupo `(site)` con la cabecera/pie; el root (`app/layout.tsx`) es
+  mínimo para que la versión embebible NO herede el «chrome».
+- `src/app/(site)/calculadora-plusvalia/page.tsx` — página principal (Sevilla).
+- `src/app/(site)/calculadora-plusvalia/[municipio]/page.tsx` — 105 páginas SSG
   por municipio de la provincia (SEO local). Sevilla capital NO tiene
   página propia: vive en la principal para no canibalizar la consulta.
+- **Embebible** (integrar en webs de terceros; ver `docs/EMBEBER.md`):
+  `src/app/embed/calculadora-plusvalia/…` (sin chrome, `frame-ancestors *`),
+  `public/embed.js` (iframe responsivo), `EmbedCalculator` (postMessage de
+  alto + seguimiento). Informe PDF descargable: `downloadReport.ts` (jsPDF).
+- **Seguimiento propio y panel**: `/api/embed-event` guarda eventos (vista/
+  cálculo + municipio + dominio anfitrión, sin cookies) en `EMBED_LOG_FILE`;
+  `/panel` (protegido por `src/middleware.ts` con PANEL_USER/PANEL_PASS) los
+  muestra. Lógica en `src/lib/track/`.
 - `src/app/api/lead/route.ts` — leads (rate-limit; reenvía a
   `LEAD_WEBHOOK_URL` si existe, si no los deja en el log).
 - Extender a nuevos municipios/años = añadir registros de datos. NUNCA
@@ -148,6 +158,10 @@ le pide (¡pedírselos es la vía para desbloquear datos!).
 6. Aportar el PDF del BOP de Sevilla de 30/08/2024 con la lista completa de
    los 85 municipios cuya plusvalía gestiona el OPAEF, para completar con
    exactitud la clasificación de `src/lib/plusvalia/data/opaef.ts`.
+7. Para el embebido y su panel: definir `PANEL_USER`/`PANEL_PASS` (y opcional
+   `EMBED_LOG_FILE`) en el `.env` de producción, y difundir el snippet de
+   integración (`docs/EMBEBER.md`) a gestorías, abogados y otras webs del
+   sector para captar tráfico hacia la calculadora.
 
 ## SEO (plan y estado)
 

@@ -33,3 +33,6 @@ leads.jsonl
 
 # eslint cache
 .eslintcache
+
+# eventos de uso del embebido (runtime)
+embed-events.jsonl

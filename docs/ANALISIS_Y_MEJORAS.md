@@ -266,6 +266,22 @@ Ver 2.5. Añadir además un cuadro «Dónde se paga la plusvalía en X»
    tenga infraestructura: informe por email como imán de leads (4.5) y
    analítica sin cookies autoalojada (4.7).
 
+## 5.bis Extras de producto (10/09/2026)
+
+- ✅ **Informe PDF descargable de un clic** (`downloadReport.ts`, jsPDF): un
+  diferenciador frente a los competidores. En el navegador, sin enviar datos.
+- ✅ **Calculadora embebible** en cualquier web (`/embed/*` + `public/embed.js`),
+  manteniendo la app propia. Iframe responsivo (postMessage de alto), sin el
+  «chrome» del sitio, enmarcable por cualquier dominio (`frame-ancestors *`)
+  mientras el resto del sitio sigue con `X-Frame-Options: DENY`. Guía en
+  `docs/EMBEBER.md`.
+- ✅ **Seguimiento propio y panel** del uso embebido: `/api/embed-event`
+  (cookieless; web anfitriona + vistas + cálculos, sin datos personales ni
+  económicos) → `EMBED_LOG_FILE`; panel en `/panel` protegido por auth básica
+  (PANEL_USER/PANEL_PASS). Política de privacidad actualizada.
+- Pendiente (lado usuario): definir `PANEL_USER`/`PANEL_PASS` y, si se quiere,
+  `EMBED_LOG_FILE`; difundir el snippet de integración a gestorías/abogados.
+
 ## 6. Pendientes del lado del usuario (sin cambios)
 
 Siguen vigentes los de `CLAUDE.md`: rama por defecto `main`, preparar el

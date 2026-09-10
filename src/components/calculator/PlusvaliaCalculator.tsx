@@ -65,9 +65,12 @@ const transferTypeLabels: Record<TransferType, { label: string; hint: string }> 
 
 export default function PlusvaliaCalculator({
   initialMunicipalityCode,
+  onCalculate,
 }: {
   /** Preselecciona el municipio (páginas por municipio para SEO local). */
   initialMunicipalityCode?: string;
+  /** Se invoca tras un cálculo correcto (p. ej. seguimiento en embebido). */
+  onCalculate?: (result: CalculationResult) => void;
 }) {
   const [form, setForm] = useState<FormState>({
     ...initialState,
@@ -253,6 +256,7 @@ export default function PlusvaliaCalculator({
     try {
       const r = calculatePlusvalia(input);
       setResult(r);
+      onCalculate?.(r);
       requestAnimationFrame(() => {
         resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
         resultsRef.current?.focus({ preventScroll: true });
