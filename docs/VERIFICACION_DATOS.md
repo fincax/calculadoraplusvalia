@@ -59,26 +59,49 @@ verificada. Solo se usa para informar a la persona usuaria de dónde y cómo
 presentar (con enlace a la sede del OPAEF).
 
 Implementación: `src/lib/plusvalia/data/opaef.ts` clasifica cada municipio
-como `opaef` (delegación constatada en fuentes), `municipal` (agencia propia,
-p. ej. Sevilla) o `unknown` (a confirmar; la UI lo comunica con prudencia).
-Los municipios `opaef` confirmados pasan a `administrationMode:
-"self_assessment"`.
+como `opaef` (figura en la relación de 85 municipios delegados) o
+`municipal` (no figura: gestión por el propio ayuntamiento, p. ej. Sevilla).
+Los municipios `opaef` pasan a `administrationMode: "self_assessment"`.
 
-- Lista confirmada `opaef` (ampliar según BOP 30/08/2024): Aguadulce, Alanís,
-  Albaida del Aljarafe, Alcalá del Río, Alcolea del Río, La Algaba, Algámitas,
-  Almadén de la Plata, Almensilla, Aznalcázar, Aznalcóllar, Badolatosa,
-  Benacazón, Bollullos de la Mitación, Brenes, Burguillos, Las Cabezas de San
-  Juan, Mairena del Alcor.
+- **Relación completa incorporada el 11/09/2026** (85 municipios, transcrita
+  de la noticia de la Diputación de 30/08/2024 y aportada por el usuario):
+  Aguadulce, Alanís, Albaida del Aljarafe, Alcalá del Río, Alcolea del Río,
+  La Algaba, Algámitas, Almadén de la Plata, Almensilla, Aznalcázar,
+  Aznalcóllar, Badolatosa, Benacazón, Bollullos de la Mitación, Brenes,
+  Burguillos, Las Cabezas de San Juan, Camas, Cantillana, Carrión de los
+  Céspedes, Castilblanco de los Arroyos, Castilleja de Guzmán, Castilleja de
+  la Cuesta, Castilleja del Campo, El Castillo de las Guardas, Cazalla de la
+  Sierra, Constantina, Coria del Río, Coripe, El Coronil, Los Corrales,
+  Espartinas, Estepa, El Garrobo, Gelves, Gerena, Gilena, Gines, Guadalcanal,
+  Guillena, Herrera, Huévar del Aljarafe, Lantejuela, Lora de Estepa, Lora
+  del Río, La Luisiana, El Madroño, Mairena del Alcor, Marinaleda, Martín de
+  la Jara, Los Molares, Las Navas de la Concepción, Olivares, Los Palacios y
+  Villafranca, Palomares del Río, Paradas, Pedrera, El Pedroso, Peñaflor,
+  Pilas, Pruna, La Puebla de los Infantes, La Puebla del Río, El Real de la
+  Jara, La Roda de Andalucía, El Rubio, Salteras, San Juan de Aznalfarache,
+  Sanlúcar la Mayor, San Nicolás del Puerto, El Saucejo, Tomares, Umbrete,
+  Utrera, Valencina de la Concepción, Villamanrique de la Condesa,
+  Villanueva del Ariscal, Villanueva del Río y Minas, Villanueva de San Juan,
+  Villaverde del Río, El Viso del Alcor, Cañada Rosal, Isla Mayor, El Cuervo
+  de Sevilla y El Palmar de Troya.
+- **Los 21 municipios con gestión propia** (no delegada a 30/08/2024):
+  Sevilla, Alcalá de Guadaíra, Arahal, Bormujos, La Campana, Carmona,
+  Casariche, Dos Hermanas, Écija, Fuentes de Andalucía, Lebrija, Mairena del
+  Aljarafe, Marchena, Montellano, Morón de la Frontera, Osuna, La Puebla de
+  Cazalla, La Rinconada, El Ronquillo, Santiponce y Tocina.
+- Ojo con los homónimos: **Alcalá del Río** (OPAEF) ≠ Alcalá de Guadaíra
+  (propia); **Mairena del Alcor** (OPAEF) ≠ Mairena del Aljarafe (propia).
 - Fuente: [Diputación de Sevilla — «El OPAEF implanta el sistema de
   autoliquidación en la gestión de las plusvalías municipales» (30/08/2024)](https://www.dipusevilla.es/comunicacion/noticias/El-OPAEF-implanta-el-sistema-de-autoliquidacion-en-la-gestion-de-las-plusvalias-municipales/)
-  y BOP de Sevilla de 30/08/2024.
-- **Pendiente (lado usuario):** aportar el PDF del BOP de 30/08/2024 con la
-  lista completa de los 85 municipios para completar la clasificación con
-  exactitud.
+  y BOP de Sevilla n.º 169 de 30/08/2024 (art. 49 de la Ordenanza General de
+  Gestión, Recaudación e Inspección del OPAEF).
+- **Nota temporal:** la relación es una foto del 30/08/2024. Las delegaciones
+  pueden cambiar; por eso la interfaz remite siempre a confirmar en la sede
+  del OPAEF o en el ayuntamiento. Revisar anualmente.
 
 > Nota: el proxy de red del entorno bloquea `dipusevilla.es` y `opaef.es`
-> (solo funciona WebSearch), así que la lista completa no pudo descargarse
-> del BOP; se marcaron `opaef` solo los municipios citados en las fuentes.
+> (solo funciona WebSearch), así que la relación se incorporó a partir de la
+> transcripción aportada por el usuario, no de una descarga directa.
 
 ## Cómo verificar un municipio (proceso)
 

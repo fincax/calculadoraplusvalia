@@ -1,6 +1,6 @@
 # CLAUDE.md — Memoria del proyecto FINCAX Plusvalía
 
-Contexto persistente para sesiones de Claude Code. Última actualización: 2026-08-28.
+Contexto persistente para sesiones de Claude Code. Última actualización: 2026-09-11.
 
 ## Qué es esto
 
@@ -21,7 +21,7 @@ datos. Este repo empezó VACÍO: todo se construyó aquí desde cero.
 ```bash
 npm run dev / build / start
 npm run lint                  # ESLint (flat config: next/core-web-vitals + ts)
-npm test                      # 86 tests (motor, leads, OPAEF, parse, share, proyección, equilibrio, embed)
+npm test                      # 89 tests (motor, leads, OPAEF, parse, share, proyección, equilibrio, embed)
 node scripts/smoke-e2e.mjs    # E2E en Chromium (requiere servidor en :3000;
                               # ejecutable en /opt/pw-browsers/chromium)
 ```
@@ -98,9 +98,13 @@ para verificar uno). Resumen:
   (Diputación de Sevilla) gestiona la plusvalía por autoliquidación en 85
   de los 106 municipios (BOP 30/08/2024). Unifica CÓMO se presenta/paga, no
   el tipo/coeficientes/bonificaciones (los fija cada ordenanza). No cambia
-  el cálculo; solo informa dónde pagar. Clasificación en
-  `src/lib/plusvalia/data/opaef.ts` (`opaef`/`municipal`/`unknown`);
-  detalle y lista confirmada en `docs/VERIFICACION_DATOS.md`.
+  el cálculo; solo informa dónde pagar. Relación COMPLETA de los 85 en
+  `src/lib/plusvalia/data/opaef.ts` (`opaef`/`municipal`; incorporada el
+  11/09/2026 a partir de la noticia de la Diputación, aportada por el
+  usuario). Los 21 con gestión propia: Sevilla, Dos Hermanas, Alcalá de
+  Guadaíra, Mairena del Aljarafe, Écija, Carmona, La Rinconada, Lebrija,
+  Morón, Osuna, Marchena, Arahal, Bormujos, etc. (lista en
+  `docs/VERIFICACION_DATOS.md`). Es una foto de 30/08/2024: revisar.
 
 ## Entorno remoto: limitación de red importante
 
@@ -155,9 +159,16 @@ le pide (¡pedírselos es la vía para desbloquear datos!).
 5. SEO off-page: Search Console (sitemap + indexación), enlace desde la
    home de fincax.es (tarjeta redactada en `docs/DESPLIEGUE.md`), Google
    Business Profile, nota de prensa local, enlaces de gestorías/abogados.
-6. Aportar el PDF del BOP de Sevilla de 30/08/2024 con la lista completa de
-   los 85 municipios cuya plusvalía gestiona el OPAEF, para completar con
-   exactitud la clasificación de `src/lib/plusvalia/data/opaef.ts`.
+6. ~~Lista OPAEF~~ HECHO (11/09/2026). Siguiente bloqueo de datos: los
+   PDFs de las ordenanzas de Dos Hermanas (Ordenanzas Fiscales 2026, págs.
+   47-55), Alcalá de Guadaíra (texto consolidado con la modificación del BOP
+   08/05/2025), Utrera (ordenanza n.º 3, versión 2022; confirmar vigencia),
+   Mairena del Aljarafe (BOP 17/07/2023) y Écija (BOP n.º 102 de 06/05/2022,
+   págs. 17-22). El usuario tiene un paquete (`fetch_and_prepare.py` +
+   `sources.json`) que descarga y recorta esos PDFs en SU PC; aquí no hay
+   red a esos dominios: pedirle que suba `data/seleccion/*.pdf`. Tipos
+   anunciados por un resumen de IA, SIN cotejar todavía: Dos Hermanas
+   26,40 %, Alcalá 30 %, Utrera 28 %, Mairena Aljarafe 30 %, Écija 28 %.
 7. Para el embebido y su panel: definir `PANEL_USER`/`PANEL_PASS` (y opcional
    `EMBED_LOG_FILE`) en el `.env` de producción, y difundir el snippet de
    integración (`docs/EMBEBER.md`) a gestorías, abogados y otras webs del
