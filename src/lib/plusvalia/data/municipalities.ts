@@ -4,12 +4,13 @@ import { isOpaefManaged, OPAEF_SEDE_PLUSVALIA_URL } from "./opaef";
 /**
  * Reglas fiscales por municipio (versionadas por fecha de vigencia).
  *
- * FASE 1: Sevilla capital con datos contrastados con su ordenanza fiscal;
- * el resto de municipios de la provincia de Sevilla se calcula con los
- * MÁXIMOS LEGALES (tipo 30 % y coeficientes máximos estatales) marcados
- * como `verified: false`, de modo que el resultado es una estimación de
- * máximo hasta verificar cada ordenanza. Para extender a nuevos municipios
- * o versiones basta con añadir registros a `MUNICIPALITY_RULES`.
+ * Verificados con su ordenanza (PDF oficial cotejado): Sevilla capital,
+ * Alcalá de Guadaíra, Utrera, Mairena del Aljarafe y Écija. El resto de
+ * municipios de la provincia de Sevilla se calcula con los MÁXIMOS LEGALES
+ * (tipo 30 % y coeficientes máximos estatales) marcados como
+ * `verified: false`, de modo que el resultado es una estimación de máximo
+ * hasta verificar cada ordenanza. Para extender a nuevos municipios o
+ * versiones basta con añadir registros a `MUNICIPALITY_RULES`.
  */
 
 const LAST_REVIEW = "2026-08-28";
@@ -237,10 +238,6 @@ export function slugify(name: string): string {
 const OFFICIAL_ORDINANCE_URLS: Record<string, string> = {
   "dos-hermanas":
     "https://www.doshermanas.es/export/sites/ayto-dos-hermanas/concejalias/hacienda/hacienda/.galleries/DOCUMENTOS-Ordenanzas/2026/ORDENANZAS-FISCALES-Y-REGULADORAS-DE-LOS-PRECIOS-PUBLICOS-2026.pdf",
-  "alcala-de-guadaira":
-    "https://ovc.alcaladeguadaira.es/sta/CarpetaPublic/public?APP_CODE=STA&PAGE_CODE=ORDENANZAS_2024",
-  "mairena-del-aljarafe":
-    "https://www.mairenadelaljarafe.es/export/sites/mairena/.galleries/Ayuntamiento/Ordenanzas/Fiscales/03-Ordenanza-Fiscal-Reguladora-del-Impuesto-sobre-el-Incremento-de-Valor-de-los-Terrenos-de-Naturaleza-Urbana.pdf",
   "mairena-del-alcor":
     "https://ayuda.mairenadelalcor.es/hc/es/articles/32356338429202 (gestión delegada en el OPAEF)",
 };
@@ -277,9 +274,227 @@ function legalMaximumRules(name: string): MunicipalityTaxRules {
   };
 }
 
+
+/**
+ * Municipios de la provincia con ordenanza COTEJADA (PDF oficial aportado el
+ * 11/09/2026). Cada ficha cita el artículo del que sale cada dato; ver
+ * docs/VERIFICACION_DATOS.md.
+ */
+const VERIFIED_AT_2026_09 = "2026-09-11";
+
+/**
+ * Alcalá de Guadaíra — texto consolidado de la ordenanza (modificaciones
+ * BOP n.º 127 de 04/06/2022 y BOP n.º 86 de 08/05/2025, art. 9.3), firmado
+ * el 09/05/2025. Tipo 30 % (art. 8.1); coeficientes máximos del art. 107.4
+ * con actualización automática (art. 7.3); prorrateo por meses completos
+ * (art. 6.4); bonificación mortis causa por vivienda habitual del causante
+ * en cuatro tramos de VCS (art. 9); autoliquidación (art. 12).
+ */
+const ALCALA_DE_GUADAIRA: MunicipalityTaxRules = {
+  municipalityCode: "alcala-de-guadaira",
+  ineCode: "41004",
+  municipalityName: "Alcalá de Guadaíra",
+  province: "Sevilla",
+  validFrom: "2022-06-05",
+  taxRate: 30,
+  coefficientsMode: "national_max",
+  bonuses: [
+    {
+      id: "alcala-mortis-causa-vivienda",
+      label:
+        "Bonificación mortis causa por adquisición de la vivienda habitual del causante (art. 9 de la ordenanza)",
+      appliesTo: ["herencia"],
+      requiresPrimaryResidence: true,
+      kinship:
+        "Descendientes/adoptados, cónyuge y ascendientes/adoptantes (o quien reciba trato análogo para continuar en el uso de la vivienda)",
+      tiers: [
+        { upToLandCadastralValue: 60000, percentage: 95 },
+        { upToLandCadastralValue: 100000, percentage: 75 },
+        { upToLandCadastralValue: 138000, percentage: 50 },
+        { percentage: 15 },
+      ],
+      conditions: [
+        "Vivienda habitual = domicilio en el que el causante figuraba empadronado en Alcalá de Guadaíra al fallecer (o, por razones de salud acreditadas, en un centro residencial o en casa de uno de los adquirentes, si su domicilio anterior era esa vivienda).",
+        "Quien adquiere debe mantener la vivienda durante los 3 años siguientes (salvo fallecimiento); si no, se paga la parte bonificada más intereses de demora.",
+        "Se aplica en la propia autoliquidación y el Ayuntamiento la comprueba de oficio.",
+      ],
+    },
+  ],
+  notes: [
+    "Alcalá de Guadaíra: tras una ponencia de valores general, el valor catastral del suelo se reduce un 20 % durante los 5 primeros años de efectividad de los nuevos valores (art. 7.2). Esta calculadora no aplica esa reducción: si te afecta, la cuota objetiva sería menor.",
+  ],
+  exemptions: COMMON_EXEMPTIONS,
+  administrationMode: "self_assessment",
+  officialSource:
+    "Ordenanza fiscal reguladora del IIVTNU del Ayuntamiento de Alcalá de Guadaíra, texto consolidado con las modificaciones publicadas en el BOP de Sevilla n.º 127 de 04/06/2022 y n.º 86 de 08/05/2025 (PDF oficial cotejado el 11/09/2026). Oficina Virtual: https://ovc.alcaladeguadaira.es",
+  publicationDate: "2025-05-08",
+  lastVerifiedAt: VERIFIED_AT_2026_09,
+  verified: true,
+};
+
+/**
+ * Utrera — Ordenanza fiscal n.º 3, adaptada al RD-ley 26/2021 por acuerdo
+ * plenario de 04/03/2022 (publicada por el Ayuntamiento en abril de 2022).
+ * Tipo 28 % (art. 13); coeficientes del art. 107.4 con actualización anual
+ * (art. 8); prorrateo por meses (art. 8); bonificación mortis causa del
+ * art. 14 (95 %/50 % según VCS, de oficio). La ordenanza prevé gestión por
+ * DECLARACIÓN (art. 17), pero desde el 02/09/2024 la plusvalía de Utrera la
+ * gestiona el OPAEF por AUTOLIQUIDACIÓN (art. 49.3 de la Ordenanza General
+ * del OPAEF, BOP n.º 169 de 30/08/2024): por eso hay dos vigencias.
+ */
+const UTRERA_BASE: Omit<
+  MunicipalityTaxRules,
+  "validFrom" | "validTo" | "administrationMode" | "officialSource"
+> = {
+  municipalityCode: "utrera",
+  ineCode: "41095",
+  municipalityName: "Utrera",
+  province: "Sevilla",
+  taxRate: 28,
+  coefficientsMode: "national_max",
+  bonuses: [
+    {
+      id: "utrera-mortis-causa-vivienda",
+      label:
+        "Bonificación mortis causa por la vivienda en la que estaba empadronado el causante (art. 14 de la ordenanza)",
+      appliesTo: ["herencia"],
+      requiresPrimaryResidence: true,
+      kinship: "Descendientes/adoptados, cónyuge y ascendientes/adoptantes",
+      tiers: [
+        { upToLandCadastralValue: 30000, percentage: 95 },
+        { upToLandCadastralValue: 99999.99, percentage: 50 },
+      ],
+      conditions: [
+        "El causante debía figurar empadronado en la vivienda durante el año anterior al fallecimiento.",
+        "95 % si el valor catastral del suelo es ≤ 30.000 €; 50 % si está entre 30.001 € y menos de 100.000 €; sin bonificación a partir de 100.000 €.",
+        "Se aplica de oficio, sin necesidad de solicitarla.",
+      ],
+    },
+  ],
+  exemptions: COMMON_EXEMPTIONS,
+  publicationDate: "2022-03-04",
+  lastVerifiedAt: VERIFIED_AT_2026_09,
+  verified: true,
+};
+
+const UTRERA_SOURCE =
+  "Ordenanza fiscal n.º 3 del Ayuntamiento de Utrera, reguladora del IIVTNU, adaptada al RD-ley 26/2021 (acuerdo plenario de 04/03/2022; PDF oficial cotejado el 11/09/2026): https://www.utrera.org/wp-content/uploads/2022/04/02-Orden_03-IIVTNU-ADAPTADA-SCT182_21-RDL26_21-BOE-09_21.pdf";
+
+const UTRERA_2022: MunicipalityTaxRules = {
+  ...UTRERA_BASE,
+  validFrom: "2022-04-01",
+  validTo: "2024-09-01",
+  administrationMode: "assessment",
+  officialSource:
+    UTRERA_SOURCE +
+    " Gestión por declaración ante el Ayuntamiento (art. 17) hasta el 01/09/2024.",
+};
+
+const UTRERA_OPAEF: MunicipalityTaxRules = {
+  ...UTRERA_BASE,
+  validFrom: "2024-09-02",
+  administrationMode: "self_assessment",
+  officialSource:
+    UTRERA_SOURCE +
+    ` Desde el 02/09/2024 la gestión está delegada en el OPAEF por autoliquidación (art. 49.3 de la Ordenanza General de Gestión, Recaudación e Inspección, BOP de Sevilla n.º 169 de 30/08/2024): ${OPAEF_SEDE_PLUSVALIA_URL}`,
+};
+
+/**
+ * Mairena del Aljarafe — texto íntegro publicado en el BOP de Sevilla
+ * n.º 163 de 17/07/2023 (CVE BOP-SE-2023-163006), en vigor desde su
+ * publicación. Tipo 30 % (art. 12.1); coeficientes máximos legales vigentes
+ * con prorrateo por meses (art. 8.2); SIN bonificaciones; gestión por
+ * declaración ante el Servicio de Recaudación (Solgest), art. 14; la opción
+ * por el método real solo vale si la declaración se presenta en plazo
+ * (art. 8.3).
+ */
+const MAIRENA_DEL_ALJARAFE: MunicipalityTaxRules = {
+  municipalityCode: "mairena-del-aljarafe",
+  ineCode: "41059",
+  municipalityName: "Mairena del Aljarafe",
+  province: "Sevilla",
+  validFrom: "2023-07-17",
+  taxRate: 30,
+  coefficientsMode: "national_max",
+  bonuses: [],
+  additionalBonusNotes: [
+    "La ordenanza de Mairena del Aljarafe no establece ninguna bonificación en la cuota (tampoco en herencias).",
+  ],
+  notes: [
+    "Mairena del Aljarafe: para que se aplique el método real (plusvalía real inferior a la objetiva) hay que optar por él en la declaración presentada DENTRO de plazo; si se presenta fuera de plazo, se liquida por el método objetivo (art. 8.3 de la ordenanza).",
+  ],
+  exemptions: COMMON_EXEMPTIONS,
+  administrationMode: "assessment",
+  officialSource:
+    "Ordenanza fiscal reguladora del IIVTNU del Ayuntamiento de Mairena del Aljarafe, texto íntegro en el BOP de Sevilla n.º 163 de 17/07/2023 (CVE BOP-SE-2023-163006; PDF cotejado el 11/09/2026). Se presenta por declaración ante el Servicio de Recaudación municipal (Solgest).",
+  publicationDate: "2023-07-17",
+  lastVerifiedAt: VERIFIED_AT_2026_09,
+  verified: true,
+};
+
+/**
+ * Écija — texto íntegro en el BOP de Sevilla n.º 102 de 06/05/2022 (en vigor
+ * el mismo día). Tipo 28 % (art. 9); coeficientes máximos del art. 107.4 con
+ * actualización automática (art. 8.3); prorrateo por meses (art. 7.4);
+ * bonificación mortis causa del 95 % si el VCS ≤ 35.000 € (art. 10);
+ * gestión por declaración ante el Ayuntamiento (art. 13).
+ */
+const ECIJA: MunicipalityTaxRules = {
+  municipalityCode: "ecija",
+  ineCode: "41039",
+  municipalityName: "Écija",
+  province: "Sevilla",
+  validFrom: "2022-05-06",
+  taxRate: 28,
+  coefficientsMode: "national_max",
+  bonuses: [
+    {
+      id: "ecija-mortis-causa-vivienda",
+      label:
+        "Bonificación mortis causa del 95 % por la vivienda habitual del causante con valor catastral del suelo ≤ 35.000 € (art. 10 de la ordenanza)",
+      appliesTo: ["herencia"],
+      requiresPrimaryResidence: true,
+      kinship: "Descendientes y ascendientes (por naturaleza o adopción) y cónyuge",
+      tiers: [{ upToLandCadastralValue: 35000, percentage: 95 }],
+      conditions: [
+        "Solo si el valor catastral del suelo del inmueble es igual o inferior a 35.000 €.",
+        "Debe acreditarse con certificado de empadronamiento que era la vivienda habitual del causante.",
+        "Quien adquiere debe mantener la vivienda durante los 3 años siguientes al fallecimiento; si no, se gira liquidación complementaria con intereses.",
+        "Es rogada: hay que solicitarla en el impreso de la declaración dentro del plazo (6 meses desde el fallecimiento, prorrogables hasta un año).",
+      ],
+    },
+  ],
+  additionalBonusNotes: [
+    "Écija contempla además un 95 % en transmisiones de terrenos sobre los que se desarrollen actividades económicas declaradas de especial interés o utilidad municipal por el Pleno (art. 10). No se aplica automáticamente.",
+  ],
+  notes: [
+    "Écija: tras una ponencia de valores general, el valor catastral del suelo se reduce un 60/55/50/45/40 % en cada uno de los 5 primeros años de efectividad de los nuevos valores (art. 8.2). Esta calculadora no aplica esa reducción: si te afecta, la cuota objetiva sería menor.",
+  ],
+  exemptions: COMMON_EXEMPTIONS,
+  administrationMode: "assessment",
+  officialSource:
+    "Ordenanza fiscal reguladora del IIVTNU del Ayuntamiento de Écija, texto íntegro en el BOP de Sevilla n.º 102 de 06/05/2022, págs. 17-23 (PDF cotejado el 11/09/2026). Se presenta por declaración ante el Ayuntamiento de Écija (art. 13).",
+  publicationDate: "2022-05-06",
+  lastVerifiedAt: VERIFIED_AT_2026_09,
+  verified: true,
+};
+
+/** Municipios con ficha verificada propia (se excluyen del cálculo por máximos). */
+const VERIFIED_PROVINCE_RULES: MunicipalityTaxRules[] = [
+  ALCALA_DE_GUADAIRA,
+  UTRERA_2022,
+  UTRERA_OPAEF,
+  MAIRENA_DEL_ALJARAFE,
+  ECIJA,
+];
+const VERIFIED_CODES = new Set(VERIFIED_PROVINCE_RULES.map((r) => r.municipalityCode));
+
 export const MUNICIPALITY_RULES: MunicipalityTaxRules[] = [
   SEVILLA_CAPITAL,
-  ...PROVINCE_MUNICIPALITY_NAMES.map(legalMaximumRules),
+  ...VERIFIED_PROVINCE_RULES,
+  ...PROVINCE_MUNICIPALITY_NAMES.filter(
+    (name) => !VERIFIED_CODES.has(slugify(name))
+  ).map(legalMaximumRules),
 ];
 
 /** Listado para el selector de la interfaz, orden alfabético con Sevilla primero. */

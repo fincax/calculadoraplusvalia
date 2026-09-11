@@ -68,10 +68,17 @@ describe("integración OPAEF con las reglas municipales", () => {
     expect(r?.officialSource).toMatch(/OPAEF/);
   });
 
-  it("no altera el tipo ni el estado de verificación (sigue por máximos)", () => {
-    const r = getRulesForDate("utrera", "2025-06-01");
+  it("no altera el tipo ni el estado de verificación (Aguadulce sigue por máximos)", () => {
+    const r = getRulesForDate("aguadulce", "2025-06-01");
     expect(r?.taxRate).toBe(30);
     expect(r?.verified).toBe(false);
+  });
+
+  it("un municipio OPAEF con ordenanza verificada conserva su tipo propio (Utrera 28 %)", () => {
+    const r = getRulesForDate("utrera", "2025-06-01");
+    expect(r?.taxRate).toBe(28);
+    expect(r?.verified).toBe(true);
+    expect(r?.administrationMode).toBe("self_assessment");
   });
 
   it("los municipios con gestión propia y ordenanza sin verificar mantienen régimen desconocido", () => {

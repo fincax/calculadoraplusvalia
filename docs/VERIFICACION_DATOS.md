@@ -1,6 +1,6 @@
 # Estado de verificación de datos municipales (IIVTNU)
 
-Última revisión: **28/08/2026**
+Última revisión: **11/09/2026**
 
 La calculadora distingue dos niveles de calidad de datos por municipio
 (`verified` en `src/lib/plusvalia/data/municipalities.ts`):
@@ -24,11 +24,13 @@ La calculadora distingue dos niveles de calidad de datos por municipio
 | Municipio | Estado | Datos aplicados | Fuente a verificar |
 |---|---|---|---|
 | Sevilla | ✅ Verificado (texto íntegro cotejado) | Tipo 26,53 % (art. 12.1); coeficientes máximos estatales (art. 8.2); bonificaciones mortis causa: vivienda habitual 95/50/30 % por tramos de VCS de toda la vivienda (≤10.000 / 10.001–20.000 / 20.001–50.000 €) y 10 % otros inmuebles — ambas computadas; 40 % locales afectos y 80 % interés social solo informadas; caudal ≤500.000 €, empadronamiento 2 años (o desde adquisición; centros asistenciales: retrotraíble 3 años), mantenimiento 3 años, carácter rogado; autoliquidación (art. 14) | Ordenanza fiscal IIVTNU, aprobada por el Pleno el 02/11/2023 y definitiva por Resolución de 22/12/2023 (texto íntegro cotejado el 28/08/2026). [Web ATSe](https://www.sevilla.org/servicios/agencia-tributaria-de-sevilla/ordenanzas-fiscales) |
-| Dos Hermanas | ⏳ Máximos | 30 % + coef. estatales | [Ordenanzas fiscales 2026 (PDF)](https://www.doshermanas.es/export/sites/ayto-dos-hermanas/concejalias/hacienda/hacienda/.galleries/DOCUMENTOS-Ordenanzas/2026/ORDENANZAS-FISCALES-Y-REGULADORAS-DE-LOS-PRECIOS-PUBLICOS-2026.pdf) |
-| Alcalá de Guadaíra | ⏳ Máximos | 30 % + coef. estatales | [Oficina Virtual del Contribuyente — Ordenanzas](https://ovc.alcaladeguadaira.es/sta/CarpetaPublic/public?APP_CODE=STA&PAGE_CODE=ORDENANZAS_2024) |
-| Mairena del Aljarafe | ⏳ Máximos | 30 % + coef. estatales | [Ordenanza fiscal IIVTNU (PDF)](https://www.mairenadelaljarafe.es/export/sites/mairena/.galleries/Ayuntamiento/Ordenanzas/Fiscales/03-Ordenanza-Fiscal-Reguladora-del-Impuesto-sobre-el-Incremento-de-Valor-de-los-Terrenos-de-Naturaleza-Urbana.pdf) |
+| Alcalá de Guadaíra | ✅ Verificado (PDF oficial cotejado el 11/09/2026) | Tipo **30 %** (art. 8.1); coeficientes máximos del art. 107.4 con actualización automática (art. 7.3); prorrateo por meses (art. 6.4); bonificación mortis causa por vivienda habitual del causante a descendientes/cónyuge/ascendientes en 4 tramos de VCS: ≤60.000 € 95 % · 60.001–100.000 € 75 % · 100.001–138.000 € 50 % · >138.000 € 15 % (art. 9); sin límite de caudal; empadronamiento del causante al fallecer (art. 9.3, modificado 2025); mantenimiento 3 años (art. 9.4); se aplica en la autoliquidación (art. 12). Reducción del 20 % del VCS los 5 años siguientes a una ponencia general (art. 7.2), solo informada | Texto consolidado con modificaciones del BOP n.º 127 (04/06/2022) y BOP n.º 86 (08/05/2025, art. 9.3), firmado 09/05/2025. [OVC Alcalá](https://ovc.alcaladeguadaira.es) |
+| Utrera | ✅ Verificado (PDF oficial cotejado el 11/09/2026) | Tipo **28 %** (art. 13); coeficientes del art. 107.4 con actualización anual (art. 8); prorrateo por meses (art. 8); bonificación mortis causa (art. 14) a descendientes/cónyuge/ascendientes por la vivienda en la que el causante estuvo empadronado el año anterior: 95 % si VCS ≤ 30.000 €, 50 % si 30.001 ≤ VCS < 100.000 €, nada desde 100.000 €; **de oficio**; sin caudal ni mantenimiento. Gestión: la ordenanza dice declaración (art. 17), pero desde el 02/09/2024 la gestiona el **OPAEF por autoliquidación** (dos vigencias en el código) | Ordenanza n.º 3 adaptada al RD-ley 26/2021, acuerdo plenario 04/03/2022 ([PDF](https://www.utrera.org/wp-content/uploads/2022/04/02-Orden_03-IIVTNU-ADAPTADA-SCT182_21-RDL26_21-BOE-09_21.pdf)). **Pendiente:** confirmar que no hay modificación posterior a 2022 |
+| Mairena del Aljarafe | ✅ Verificado (PDF del BOP cotejado el 11/09/2026) | Tipo **30 %** (art. 12.1); coeficientes máximos legales vigentes, prorrateo por meses (art. 8.2); **sin bonificaciones**; gestión por declaración ante el Servicio de Recaudación (Solgest), 30 días / 6 meses prorrogables (art. 14); la opción por el método real solo si se declara en plazo (art. 8.3, informado como aviso) | BOP de Sevilla n.º 163 de 17/07/2023, CVE BOP-SE-2023-163006 ([PDF](https://admbop.dipusevilla.es/export/sites/bop/.galleries/Documentos-Anuncios-en-PDF/firmado-1689548502645-final-791f0bfe-1.pdf)) |
+| Écija | ✅ Verificado (PDF del BOP cotejado el 11/09/2026) | Tipo **28 %** (art. 9); coeficientes máximos del art. 107.4 con actualización automática (art. 8.3); prorrateo por meses (art. 7.4); bonificación mortis causa del **95 % solo si VCS ≤ 35.000 €**, vivienda habitual del causante (certificado de empadronamiento), descendientes/ascendientes/cónyuge, mantenimiento 3 años, rogada en la declaración (art. 10); 95 % actividades de especial interés municipal (solo informada); reducciones del VCS 60/55/50/45/40 % los 5 años tras ponencia general (art. 8.2, solo informada); gestión por declaración, 30 días hábiles / 6 meses prorrogables (art. 13) | BOP de Sevilla n.º 102 de 06/05/2022, págs. 17-23 ([PDF](https://www.dipusevilla.es/system/modules/com.saga.sagasuite.theme.diputacion.sevilla.corporativo/handlers/download-bop.pdf?id=cffd9f99-cc5e-11ec-a4b1-0050569fe27b)). **Pendiente:** confirmar que no hay modificación posterior a 2022 |
+| Dos Hermanas | ⏳ Máximos | 30 % + coef. estatales. Un resumen no oficial indica 26,40 % en las Ordenanzas Fiscales 2026 (art. 2), **sin cotejar** | [Ordenanzas fiscales 2026 (PDF, IIVTNU desde la pág. impresa 47 = pág. PDF 51)](https://www.doshermanas.es/export/sites/ayto-dos-hermanas/concejalias/hacienda/hacienda/.galleries/DOCUMENTOS-Ordenanzas/2026/ORDENANZAS-FISCALES-Y-REGULADORAS-DE-LOS-PRECIOS-PUBLICOS-2026.pdf) |
 | Mairena del Alcor | ⏳ Máximos | 30 % + coef. estatales | Gestión delegada en el [OPAEF](https://www.opaef.es) (Diputación de Sevilla) |
-| Resto de la provincia (100 municipios) | ⏳ Máximos | 30 % + coef. estatales | Ordenanza municipal o [BOP de Sevilla](https://bop.dipusevilla.es). Muchos municipios pequeños delegan la gestión en el **OPAEF**. |
+| Resto de la provincia (99 municipios) | ⏳ Máximos | 30 % + coef. estatales | Ordenanza municipal o [BOP de Sevilla](https://bop.dipusevilla.es). 85 municipios delegan la gestión en el **OPAEF**. |
 
 > Nota: el intento de verificación automática desde este entorno no fue
 > posible porque el proxy de red bloquea los dominios municipales y los
@@ -93,8 +95,11 @@ Los municipios `opaef` pasan a `administrationMode: "self_assessment"`.
   (propia); **Mairena del Alcor** (OPAEF) ≠ Mairena del Aljarafe (propia).
 - Fuente: [Diputación de Sevilla — «El OPAEF implanta el sistema de
   autoliquidación en la gestión de las plusvalías municipales» (30/08/2024)](https://www.dipusevilla.es/comunicacion/noticias/El-OPAEF-implanta-el-sistema-de-autoliquidacion-en-la-gestion-de-las-plusvalias-municipales/)
-  y BOP de Sevilla n.º 169 de 30/08/2024 (art. 49 de la Ordenanza General de
-  Gestión, Recaudación e Inspección del OPAEF).
+  y BOP de Sevilla n.º 169 de 30/08/2024 (CVE BOP-SE-2024-169001; PDF
+  cotejado el 11/09/2026). Su **art. 49.3** establece la autoliquidación del
+  IIVTNU en los municipios delegados, con plazos de 30 días hábiles (inter
+  vivos) y 6 meses desde el fallecimiento (prorrogables hasta un año si se
+  pide antes de vencer; la prórroga se entiende concedida tácitamente).
 - **Nota temporal:** la relación es una foto del 30/08/2024. Las delegaciones
   pueden cambiar; por eso la interfaz remite siempre a confirmar en la sede
   del OPAEF o en el ayuntamiento. Revisar anualmente.

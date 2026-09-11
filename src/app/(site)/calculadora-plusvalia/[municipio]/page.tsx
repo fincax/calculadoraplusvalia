@@ -172,8 +172,19 @@ export default async function MunicipioPage({
       >
         {rules.verified ? (
           <p className="text-ink-700">
-            Datos contrastados con la ordenanza fiscal de {name}: tipo de
-            gravamen del {formatPct(rules.taxRate)}.
+            <strong className="text-ink-900">
+              Datos contrastados con la ordenanza fiscal de {name}.
+            </strong>{" "}
+            Tipo de gravamen del {formatPct(rules.taxRate)} y coeficientes
+            máximos estatales por remisión al art. 107.4 TRLHL.{" "}
+            {rules.bonuses.length > 0
+              ? `La ordenanza prevé bonificación en herencias (${rules.bonuses
+                  .map((b) => b.tiers.map((t) => `${t.percentage} %`).join("/"))
+                  .join(" y ")}) por la vivienda habitual del causante; la calculadora la aplica según el valor catastral del suelo.`
+              : "La ordenanza no establece bonificaciones en la cuota."}{" "}
+            {rules.administrationMode === "assessment"
+              ? "Se presenta por declaración y el ayuntamiento liquida."
+              : "Se presenta por autoliquidación."}
           </p>
         ) : (
           <p className="text-ink-700">
@@ -213,8 +224,10 @@ export default async function MunicipioPage({
             unifica el <em>procedimiento</em> (cómo se graba, se presenta y se
             paga), pero el tipo de gravamen, los coeficientes y las
             bonificaciones los sigue fijando la ordenanza fiscal de cada
-            ayuntamiento. Por eso, mientras no verifiquemos la ordenanza de{" "}
-            {name}, esta calculadora estima por los máximos legales.
+            ayuntamiento.{" "}
+            {rules.verified
+              ? `En ${name} la calculadora aplica ya los datos de su ordenanza.`
+              : `Por eso, mientras no verifiquemos la ordenanza de ${name}, esta calculadora estima por los máximos legales.`}
           </p>
           <a
             href={OPAEF_SEDE_PLUSVALIA_URL}
