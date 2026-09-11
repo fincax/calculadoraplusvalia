@@ -72,7 +72,7 @@ export default async function MunicipioPage({
   const dondeSePaga =
     gestor === "opaef"
       ? `En ${name} la gestión de la plusvalía municipal está delegada en el OPAEF (Organismo Provincial de Asistencia Económica y Fiscal de la Diputación de Sevilla). Desde el 2 de septiembre de 2024 se presenta y paga por autoliquidación en la sede electrónica del OPAEF.`
-      : `La mayoría de los municipios de la provincia de Sevilla (85 de 106) tienen delegada la gestión de la plusvalía en el OPAEF (Diputación de Sevilla), que desde el 2 de septiembre de 2024 se tramita por autoliquidación. Comprueba en la sede electrónica del OPAEF si ${name} está incluido; si no aparece, la gestiona la propia agencia tributaria del ayuntamiento.`;
+      : `${name} no figura entre los 85 municipios de la provincia que, según la relación publicada por la Diputación de Sevilla el 30 de agosto de 2024, tienen delegada la gestión de la plusvalía en el OPAEF. Por tanto, el impuesto se presenta y paga ante la propia agencia tributaria o tesorería del Ayuntamiento de ${name}. Como las delegaciones pueden cambiar, confírmalo en el ayuntamiento o en la sede electrónica del OPAEF.`;
 
   const faqs = [
     {
