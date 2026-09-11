@@ -53,6 +53,10 @@ export function calculatePlusvalia(input: CalculationInput): CalculationResult {
     );
   }
 
+  // Particularidades de la ordenanza verificada (reducciones catastrales,
+  // plazos para optar por el método real…): se muestran como avisos.
+  if (rules.notes) warnings.push(...rules.notes);
+
   // Aviso por devengo futuro: los coeficientes del método objetivo se
   // actualizan cada año (Ley de Presupuestos), así que una simulación con
   // fecha de un año posterior al actual puede variar cuando se apruebe la

@@ -21,7 +21,7 @@ datos. Este repo empezó VACÍO: todo se construyó aquí desde cero.
 ```bash
 npm run dev / build / start
 npm run lint                  # ESLint (flat config: next/core-web-vitals + ts)
-npm test                      # 89 tests (motor, leads, OPAEF, parse, share, proyección, equilibrio, embed)
+npm test                      # 109 tests (motor, leads, OPAEF, parse, share, proyección, equilibrio, embed)
 node scripts/smoke-e2e.mjs    # E2E en Chromium (requiere servidor en :3000;
                               # ejecutable en /opt/pw-browsers/chromium)
 ```
@@ -89,11 +89,20 @@ para verificar uno). Resumen:
   10 % otros inmuebles (excluyentes entre sí; ambas computadas); 40 %
   locales afectos y 80 % interés social solo se informan. Autoliquidación
   (Agencia Tributaria de Sevilla).
-- **Resto de la provincia (104 municipios)**: `verified: false` →
+- **Verificados el 11/09/2026 con PDF oficial (aportados por el usuario)**:
+  Alcalá de Guadaíra (30 %; mortis causa vivienda habitual 95/75/50/15 %
+  por VCS ≤60k/≤100k/≤138k/>138k; autoliquidación), Utrera (28 %; mortis
+  causa 95 % VCS ≤30k, 50 % <100k, de oficio; OPAEF desde 09/2024, dos
+  vigencias), Mairena del Aljarafe (30 %; SIN bonificaciones; declaración
+  ante Solgest; método real solo si se declara en plazo) y Écija (28 %;
+  mortis causa 95 % solo VCS ≤35k; declaración). Fichas en
+  `municipalities.ts` con artículo citado; tests en `data/verified.test.ts`.
+  Campo `notes` en `MunicipalityTaxRules` → avisos del motor.
+- **Resto de la provincia (100 municipios)**: `verified: false` →
   estimación por MÁXIMOS legales (tipo 30 % + coeficientes estatales),
   comunicado en la UI como cota superior. NO inventar tipos municipales:
   o fuente primaria o máximos. Datos pre-reforma (p. ej. Dos Hermanas
-  25,16 % de 2016) NO sirven.
+  25,16 % de 2016) NO sirven. Dos Hermanas sigue por máximos (falta su PDF).
 - **OPAEF (procedimiento, no cuantía)**: desde el 02/09/2024 el OPAEF
   (Diputación de Sevilla) gestiona la plusvalía por autoliquidación en 85
   de los 106 municipios (BOP 30/08/2024). Unifica CÓMO se presenta/paga, no
@@ -159,16 +168,12 @@ le pide (¡pedírselos es la vía para desbloquear datos!).
 5. SEO off-page: Search Console (sitemap + indexación), enlace desde la
    home de fincax.es (tarjeta redactada en `docs/DESPLIEGUE.md`), Google
    Business Profile, nota de prensa local, enlaces de gestorías/abogados.
-6. ~~Lista OPAEF~~ HECHO (11/09/2026). Siguiente bloqueo de datos: los
-   PDFs de las ordenanzas de Dos Hermanas (Ordenanzas Fiscales 2026, págs.
-   47-55), Alcalá de Guadaíra (texto consolidado con la modificación del BOP
-   08/05/2025), Utrera (ordenanza n.º 3, versión 2022; confirmar vigencia),
-   Mairena del Aljarafe (BOP 17/07/2023) y Écija (BOP n.º 102 de 06/05/2022,
-   págs. 17-22). El usuario tiene un paquete (`fetch_and_prepare.py` +
-   `sources.json`) que descarga y recorta esos PDFs en SU PC; aquí no hay
-   red a esos dominios: pedirle que suba `data/seleccion/*.pdf`. Tipos
-   anunciados por un resumen de IA, SIN cotejar todavía: Dos Hermanas
-   26,40 %, Alcalá 30 %, Utrera 28 %, Mairena Aljarafe 30 %, Écija 28 %.
+6. Datos: falta el PDF de **Dos Hermanas** (Ordenanzas Fiscales 2026,
+   págs. impresas 47-55 = PDF 51-59; tipo anunciado 26,40 %, sin cotejar).
+   Y confirmar que Utrera y Écija (textos de 2022) no tienen modificación
+   posterior. El usuario tiene un paquete (`fetch_and_prepare.py` +
+   `sources.json`) que descarga y recorta los PDFs en SU PC; aquí no hay
+   red a esos dominios.
 7. Para el embebido y su panel: definir `PANEL_USER`/`PANEL_PASS` (y opcional
    `EMBED_LOG_FILE`) en el `.env` de producción, y difundir el snippet de
    integración (`docs/EMBEBER.md`) a gestorías, abogados y otras webs del

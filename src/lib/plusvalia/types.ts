@@ -105,6 +105,13 @@ export interface MunicipalityTaxRules {
   /** Bonificaciones existentes que la calculadora no computa automáticamente (se muestran como aviso). */
   additionalBonusNotes?: string[];
 
+  /**
+   * Particularidades de la ordenanza que afectan al cálculo o a la gestión
+   * (p. ej. reducciones catastrales tras ponencia, plazo para optar por el
+   * método real). El motor las incorpora a los avisos del resultado.
+   */
+  notes?: string[];
+
   /** Fuente normativa (ordenanza fiscal, BOP…). */
   officialSource: string;
   publicationDate?: string;
