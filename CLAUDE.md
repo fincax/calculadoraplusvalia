@@ -21,7 +21,7 @@ datos. Este repo empezó VACÍO: todo se construyó aquí desde cero.
 ```bash
 npm run dev / build / start
 npm run lint                  # ESLint (flat config: next/core-web-vitals + ts)
-npm test                      # 109 tests (motor, leads, OPAEF, parse, share, proyección, equilibrio, embed)
+npm test                      # 111 tests (motor, leads, OPAEF, parse, share, proyección, equilibrio, embed, url)
 node scripts/smoke-e2e.mjs    # E2E en Chromium (requiere servidor en :3000;
                               # ejecutable en /opt/pw-browsers/chromium)
 ```

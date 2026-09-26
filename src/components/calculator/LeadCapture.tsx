@@ -148,7 +148,12 @@ export default function LeadCapture({ result }: { result: CalculationResult }) {
             <label htmlFor="lead-consent" className="text-xs text-ink-700">
               Acepto que FINCAX use estos datos únicamente para responder a mi
               consulta, conforme a la{" "}
-              <a href="/politica-privacidad" className="underline">
+              <a
+                href="/politica-privacidad"
+                target="_blank"
+                rel="noopener"
+                className="underline"
+              >
                 política de privacidad
               </a>
               .

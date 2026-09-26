@@ -16,6 +16,7 @@ import type {
   TransferType,
 } from "@/lib/plusvalia/types";
 import { CheckboxRow, Field, Fieldset, inputClass } from "@/components/ui";
+import { publicUrlFor } from "@/lib/site/url";
 import ResultsPanel from "./ResultsPanel";
 
 /** Fecha mínima admitida (entrada en vigor del sistema actual, RD-ley 26/2021). */
@@ -66,11 +67,14 @@ const transferTypeLabels: Record<TransferType, { label: string; hint: string }> 
 export default function PlusvaliaCalculator({
   initialMunicipalityCode,
   onCalculate,
+  embedded = false,
 }: {
   /** Preselecciona el municipio (páginas por municipio para SEO local). */
   initialMunicipalityCode?: string;
   /** Se invoca tras un cálculo correcto (p. ej. seguimiento en embebido). */
   onCalculate?: (result: CalculationResult) => void;
+  /** Versión embebida (iframe): el enlace compartible apunta a la web pública. */
+  embedded?: boolean;
 }) {
   const [form, setForm] = useState<FormState>({
     ...initialState,
@@ -95,7 +99,9 @@ export default function PlusvaliaCalculator({
 
   function currentShareUrl(): string {
     const qs = encodeShareParams(form);
-    const base = window.location.origin + window.location.pathname;
+    const base = embedded
+      ? publicUrlFor(window.location.pathname)
+      : window.location.origin + window.location.pathname;
     return qs ? `${base}?${qs}` : base;
   }
 
@@ -103,7 +109,7 @@ export default function PlusvaliaCalculator({
     try {
       const url = currentShareUrl();
       await navigator.clipboard.writeText(url);
-      window.history.replaceState(null, "", url);
+      if (!embedded) window.history.replaceState(null, "", url);
       setCopied(true);
       window.setTimeout(() => setCopied(false), 2500);
     } catch {
