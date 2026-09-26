@@ -187,7 +187,10 @@ location ~ ^/(embed|embed\.js$|api/embed-event|panel|politica-privacidad) {
 ```
 
 > Ojo: si la web principal también usa Next.js, el `location /_next/`
-> entraría en conflicto; en ese caso usa la Opción A (subdominio).
+> entraría en conflicto; en ese caso usa la Opción A (subdominio). Con una
+> web principal en **Laravel** (el caso de fincax.es) también se recomienda
+> la Opción A: rutas como `/politica-privacidad`, `/sitemap.xml` o
+> `/robots.txt` existirían en las dos aplicaciones. Guía en `docs/EMBEBER.md`.
 
 ### Texto sugerido para la tarjeta de la herramienta
 

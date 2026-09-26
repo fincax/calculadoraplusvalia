@@ -1,6 +1,6 @@
 # CLAUDE.md — Memoria del proyecto FINCAX Plusvalía
 
-Contexto persistente para sesiones de Claude Code. Última actualización: 2026-09-11.
+Contexto persistente para sesiones de Claude Code. Última actualización: 2026-09-26.
 
 ## Qué es esto
 
@@ -136,9 +136,9 @@ ordenanzas, **pedir al usuario que suba el PDF** (ya lo hizo dos veces con
 
 ## Flujo de trabajo git/CI/CD
 
-- Desarrollo en la rama `claude/fincax-plusvalia-calculator-opghd8` →
+- Desarrollo en ramas `claude/…` (la de cada sesión) →
   PR a `main` → merge cuando la CI esté verde (el usuario delegó el merge:
-  «decide tú»; PRs #1–#4 fusionados así).
+  «decide tú»; PRs #1–#8 fusionados así).
 - CI (`ci.yml`): tests+build en cada PR. Deploy (`deploy.yml`): en cada
   push a `main`, tests+build y SSH al VPS de Clouding.io ejecutando
   `scripts/deploy.sh` (PM2+Nginx; ver `docs/DESPLIEGUE.md`). El job de
@@ -158,9 +158,12 @@ le pide (¡pedírselos es la vía para desbloquear datos!).
 ## Pendientes (lado usuario — recordárselo si procede)
 
 1. GitHub → Settings → Default branch → `main` (+ protección de rama).
-2. Preparar el VPS con `docs/DESPLIEGUE.md` (secciones 1–5) y decidir URL
-   definitiva: **recomendado `fincax.es/calculadora-plusvalia`** (ruta, no
-   subdominio); opciones A/B documentadas en la guía.
+2. Preparar el VPS con `docs/DESPLIEGUE.md` (secciones 1–5). URL decidida
+   (26/09/2026, web principal en Laravel): app en **`calculadora.fincax.es`**
+   (Opción A) + vista Blade en `fincax.es/calculadora-plusvalia` que la
+   embebe (`docs/laravel/`, canonical al subdominio). La Opción B (proxy de
+   rutas en el Nginx de Laravel) choca con rutas de Laravel
+   (`/politica-privacidad`, `/sitemap.xml`, `/robots.txt`).
 3. Secrets SSH en GitHub Actions (sección 6) → activa el deploy automático.
 4. `.env` de producción: `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_WHATSAPP_NUMBER`
    (activa el botón de WhatsApp) y el destino de leads. Los leads se entregan
