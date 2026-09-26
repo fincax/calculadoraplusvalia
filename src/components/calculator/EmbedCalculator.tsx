@@ -18,15 +18,24 @@ export default function EmbedCalculator({
   useEffect(() => {
     trackEmbedEvent("view", initialMunicipalityCode);
 
+    // Se mide el CONTENIDO (el fondo del último hijo del body), no el
+    // documento: el body tiene `min-h-screen`, así que su alto sigue al del
+    // iframe y medirlo provocaría un bucle de crecimiento infinito.
+    let last = 0;
     const postHeight = () => {
-      const height = Math.ceil(
-        document.documentElement.scrollHeight || document.body.scrollHeight
+      const children = Array.from(document.body.children);
+      const bottom = Math.max(
+        0,
+        ...children.map((el) => el.getBoundingClientRect().bottom)
       );
+      const height = Math.ceil(bottom + window.scrollY);
+      if (height === last) return;
+      last = height;
       window.parent?.postMessage({ type: "fincax:height", height }, "*");
     };
     postHeight();
     const ro = new ResizeObserver(postHeight);
-    ro.observe(document.body);
+    Array.from(document.body.children).forEach((el) => ro.observe(el));
     window.addEventListener("load", postHeight);
     return () => {
       ro.disconnect();
@@ -37,6 +46,7 @@ export default function EmbedCalculator({
   return (
     <PlusvaliaCalculator
       initialMunicipalityCode={initialMunicipalityCode}
+      embedded
       onCalculate={(r) => trackEmbedEvent("calculate", r.rules.municipalityCode)}
     />
   );

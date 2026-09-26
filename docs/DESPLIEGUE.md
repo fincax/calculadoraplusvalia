@@ -177,10 +177,20 @@ location /api/lead {        # API de leads de la calculadora
     proxy_pass http://127.0.0.1:3000;
     proxy_set_header Host $host;
 }
+# Calculadora embebible, su script, su seguimiento y el panel de uso
+location ~ ^/(embed|embed\.js$|api/embed-event|panel|politica-privacidad) {
+    proxy_pass http://127.0.0.1:3000;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
 ```
 
 > Ojo: si la web principal también usa Next.js, el `location /_next/`
-> entraría en conflicto; en ese caso usa la Opción A (subdominio).
+> entraría en conflicto; en ese caso usa la Opción A (subdominio). Con una
+> web principal en **Laravel** (el caso de fincax.es) también se recomienda
+> la Opción A: rutas como `/politica-privacidad`, `/sitemap.xml` o
+> `/robots.txt` existirían en las dos aplicaciones. Guía en `docs/EMBEBER.md`.
 
 ### Texto sugerido para la tarjeta de la herramienta
 

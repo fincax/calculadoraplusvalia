@@ -30,6 +30,8 @@
     iframe.src = src;
     iframe.title = "Calculadora de Plusvalía Municipal (FINCAX)";
     iframe.loading = "lazy";
+    // Necesario para el botón «Copiar enlace» dentro de un iframe de otro dominio.
+    iframe.setAttribute("allow", "clipboard-write");
     iframe.setAttribute("scrolling", "no");
     iframe.style.width = "100%";
     iframe.style.border = "0";

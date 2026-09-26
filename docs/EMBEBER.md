@@ -5,7 +5,80 @@ web (gestorías, abogados, otras inmobiliarias, blogs del sector) mediante un
 `iframe` responsivo. Sigue funcionando además como app propia en
 `fincax.es/calculadora-plusvalia`.
 
-## Cómo integrarla (lo que se le da al cliente)
+## En la propia web de FINCAX (fincax.es)
+
+La calculadora es una app Next.js que corre en el VPS; la web principal puede
+estar hecha con otra herramienta (WordPress, Wix, etc.). La forma más sencilla
+y robusta de unirlas es:
+
+1. **Publicar la app en un subdominio**: `calculadora.fincax.es` (Opción A de
+   `docs/DESPLIEGUE.md`), con `NEXT_PUBLIC_SITE_URL=https://calculadora.fincax.es`
+   en el `.env` (si no, las canónicas y el enlace «FINCAX» del crédito apuntarían
+   a una ruta que no existe en la web principal).
+2. **Crear en fincax.es una página** «Calculadora de plusvalía» (p. ej.
+   `fincax.es/calculadora-plusvalia`) dentro de «Herramientas profesionales» y
+   pegar en ella un bloque de HTML personalizado con:
+
+   ```html
+   <div id="fincax-plusvalia"></div>
+   <script src="https://calculadora.fincax.es/embed.js" async></script>
+   ```
+
+   - **WordPress** (Gutenberg): bloque «HTML personalizado». En Elementor:
+     widget «HTML». Si hay un plugin de caché/optimización (WP Rocket,
+     Autoptimize…), excluir `embed.js` de «retrasar/combinar JavaScript».
+   - **Wix / Squarespace / Webflow**: elemento «Insertar código / Embed».
+     Estos constructores meten el código en su propio marco de alto fijo, así
+     que el alto automático no llega: usar directamente el iframe con un alto
+     generoso (1.900 px en móvil cubre formulario + resultados):
+
+     ```html
+     <iframe src="https://calculadora.fincax.es/embed/calculadora-plusvalia"
+             title="Calculadora de Plusvalía Municipal (FINCAX)"
+             allow="clipboard-write" style="width:100%;height:1900px;border:0"></iframe>
+     ```
+3. En la tarjeta de «Herramientas profesionales» de la home, enlazar a esa
+   página.
+
+### fincax.es es Laravel (PHP): pasos exactos
+
+La vista lista para copiar está en `docs/laravel/calculadora-plusvalia.blade.php`.
+
+1. Copiarla a `resources/views/herramientas/calculadora-plusvalia.blade.php` y
+   ajustar `@extends('layouts.app')`, `@section('content')` y `@push('head')` a
+   los nombres que use el layout de la web (si el layout no tiene
+   `@stack('head')`, mover el `<meta>` y el `<link rel="canonical">` a donde
+   el layout imprima la cabecera).
+2. Añadir la ruta en `routes/web.php`:
+
+   ```php
+   Route::view('/calculadora-plusvalia', 'herramientas.calculadora-plusvalia')
+       ->name('calculadora-plusvalia');
+   ```
+3. Enlazarla desde la tarjeta de «Herramientas profesionales»:
+   `<a href="{{ route('calculadora-plusvalia') }}">`.
+4. Si hay caché de rutas/vistas en producción:
+   `php artisan route:cache && php artisan view:cache`.
+5. Si la web Laravel envía una cabecera Content-Security-Policy (p. ej. con
+   `spatie/laravel-csp` o desde Nginx), añadir `https://calculadora.fincax.es`
+   a `script-src` y `frame-src`. Si no hay CSP, no hay que tocar nada.
+
+La vista lleva `<link rel="canonical">` hacia la página completa del
+subdominio: así Google no ve dos páginas compitiendo por la misma búsqueda y
+concentra el posicionamiento en la que tiene todo el contenido.
+
+SEO: el contenido de un iframe **no posiciona** para la página que lo contiene
+(la versión embebida es además `noindex`). Lo que posiciona son las páginas de
+la app (`calculadora.fincax.es/calculadora-plusvalia` y las 105 de municipios,
+con sitemap propio). Por eso conviene dar de alta el subdominio en Search
+Console y que la página de fincax.es tenga su propio texto (título H1, una
+explicación breve) y un enlace a la versión completa.
+
+Si la web principal se sirve desde el mismo Nginx del VPS, la alternativa es
+la Opción B (`fincax.es/calculadora-plusvalia` directamente, sin iframe; mejor
+para SEO). En ese caso el snippet para terceros usa `https://fincax.es/embed.js`.
+
+## Cómo integrarla en webs de terceros (lo que se le da al cliente)
 
 Pegar esto donde quiera que aparezca la calculadora:
 
@@ -24,6 +97,9 @@ identificador (slug) del municipio:
 
 El script inserta un `iframe` a `/embed/calculadora-plusvalia` y lo ajusta de
 alto automáticamente (mensajes `postMessage`). No usa cookies.
+
+> El dominio del snippet es el de la app: `https://fincax.es` con la Opción B
+> del despliegue o `https://calculadora.fincax.es` con la Opción A.
 
 ## Cómo funciona por dentro
 

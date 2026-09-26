@@ -1,6 +1,6 @@
 # CLAUDE.md — Memoria del proyecto FINCAX Plusvalía
 
-Contexto persistente para sesiones de Claude Code. Última actualización: 2026-09-11.
+Contexto persistente para sesiones de Claude Code. Última actualización: 2026-09-26.
 
 ## Qué es esto
 
@@ -11,7 +11,10 @@ Calculadora de Plusvalía Municipal (IIVTNU) para Sevilla y provincia, de
 [fincax.es](https://fincax.es), junto a la valoración con IA, la calculadora
 hipotecaria y el comparador. Objetivo de negocio: captar leads de alta
 intención; objetivo SEO: primera página de Google para «calcular plusvalía
-municipal en Sevilla».
+municipal en Sevilla». La web principal fincax.es está hecha en **Laravel
+(PHP)**: la calculadora se integra como iframe (`embed.js`) en una vista Blade
+(`docs/laravel/`, guía en `docs/EMBEBER.md`), con la app en
+`calculadora.fincax.es`.
 
 ## Stack y comandos
 
@@ -21,7 +24,7 @@ datos. Este repo empezó VACÍO: todo se construyó aquí desde cero.
 ```bash
 npm run dev / build / start
 npm run lint                  # ESLint (flat config: next/core-web-vitals + ts)
-npm test                      # 109 tests (motor, leads, OPAEF, parse, share, proyección, equilibrio, embed)
+npm test                      # 111 tests (motor, leads, OPAEF, parse, share, proyección, equilibrio, embed, url)
 node scripts/smoke-e2e.mjs    # E2E en Chromium (requiere servidor en :3000;
                               # ejecutable en /opt/pw-browsers/chromium)
 ```
@@ -133,9 +136,9 @@ ordenanzas, **pedir al usuario que suba el PDF** (ya lo hizo dos veces con
 
 ## Flujo de trabajo git/CI/CD
 
-- Desarrollo en la rama `claude/fincax-plusvalia-calculator-opghd8` →
+- Desarrollo en ramas `claude/…` (la de cada sesión) →
   PR a `main` → merge cuando la CI esté verde (el usuario delegó el merge:
-  «decide tú»; PRs #1–#4 fusionados así).
+  «decide tú»; PRs #1–#8 fusionados así).
 - CI (`ci.yml`): tests+build en cada PR. Deploy (`deploy.yml`): en cada
   push a `main`, tests+build y SSH al VPS de Clouding.io ejecutando
   `scripts/deploy.sh` (PM2+Nginx; ver `docs/DESPLIEGUE.md`). El job de
@@ -155,9 +158,12 @@ le pide (¡pedírselos es la vía para desbloquear datos!).
 ## Pendientes (lado usuario — recordárselo si procede)
 
 1. GitHub → Settings → Default branch → `main` (+ protección de rama).
-2. Preparar el VPS con `docs/DESPLIEGUE.md` (secciones 1–5) y decidir URL
-   definitiva: **recomendado `fincax.es/calculadora-plusvalia`** (ruta, no
-   subdominio); opciones A/B documentadas en la guía.
+2. Preparar el VPS con `docs/DESPLIEGUE.md` (secciones 1–5). URL decidida
+   (26/09/2026, web principal en Laravel): app en **`calculadora.fincax.es`**
+   (Opción A) + vista Blade en `fincax.es/calculadora-plusvalia` que la
+   embebe (`docs/laravel/`, canonical al subdominio). La Opción B (proxy de
+   rutas en el Nginx de Laravel) choca con rutas de Laravel
+   (`/politica-privacidad`, `/sitemap.xml`, `/robots.txt`).
 3. Secrets SSH en GitHub Actions (sección 6) → activa el deploy automático.
 4. `.env` de producción: `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_WHATSAPP_NUMBER`
    (activa el botón de WhatsApp) y el destino de leads. Los leads se entregan
