@@ -40,6 +40,33 @@ y robusta de unirlas es:
 3. En la tarjeta de «Herramientas profesionales» de la home, enlazar a esa
    página.
 
+### fincax.es es Laravel (PHP): pasos exactos
+
+La vista lista para copiar está en `docs/laravel/calculadora-plusvalia.blade.php`.
+
+1. Copiarla a `resources/views/herramientas/calculadora-plusvalia.blade.php` y
+   ajustar `@extends('layouts.app')`, `@section('content')` y `@push('head')` a
+   los nombres que use el layout de la web (si el layout no tiene
+   `@stack('head')`, mover el `<meta>` y el `<link rel="canonical">` a donde
+   el layout imprima la cabecera).
+2. Añadir la ruta en `routes/web.php`:
+
+   ```php
+   Route::view('/calculadora-plusvalia', 'herramientas.calculadora-plusvalia')
+       ->name('calculadora-plusvalia');
+   ```
+3. Enlazarla desde la tarjeta de «Herramientas profesionales»:
+   `<a href="{{ route('calculadora-plusvalia') }}">`.
+4. Si hay caché de rutas/vistas en producción:
+   `php artisan route:cache && php artisan view:cache`.
+5. Si la web Laravel envía una cabecera Content-Security-Policy (p. ej. con
+   `spatie/laravel-csp` o desde Nginx), añadir `https://calculadora.fincax.es`
+   a `script-src` y `frame-src`. Si no hay CSP, no hay que tocar nada.
+
+La vista lleva `<link rel="canonical">` hacia la página completa del
+subdominio: así Google no ve dos páginas compitiendo por la misma búsqueda y
+concentra el posicionamiento en la que tiene todo el contenido.
+
 SEO: el contenido de un iframe **no posiciona** para la página que lo contiene
 (la versión embebida es además `noindex`). Lo que posiciona son las páginas de
 la app (`calculadora.fincax.es/calculadora-plusvalia` y las 105 de municipios,

@@ -11,7 +11,10 @@ Calculadora de Plusvalía Municipal (IIVTNU) para Sevilla y provincia, de
 [fincax.es](https://fincax.es), junto a la valoración con IA, la calculadora
 hipotecaria y el comparador. Objetivo de negocio: captar leads de alta
 intención; objetivo SEO: primera página de Google para «calcular plusvalía
-municipal en Sevilla».
+municipal en Sevilla». La web principal fincax.es está hecha en **Laravel
+(PHP)**: la calculadora se integra como iframe (`embed.js`) en una vista Blade
+(`docs/laravel/`, guía en `docs/EMBEBER.md`), con la app en
+`calculadora.fincax.es`.
 
 ## Stack y comandos
 
