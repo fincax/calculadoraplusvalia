@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { aggregateEmbedEvents, type StoredEmbedEvent } from "@/lib/track/embed";
+import { env } from "@/lib/env";
 
 /**
  * Panel de uso de la calculadora embebida (webs integradoras, vistas y
@@ -18,7 +19,7 @@ export const metadata: Metadata = {
 
 async function readEvents(): Promise<StoredEmbedEvent[]> {
   const file =
-    process.env.EMBED_LOG_FILE ??
+    env("EMBED_LOG_FILE") ??
     path.join(process.cwd(), "embed-events.jsonl");
   let text: string;
   try {

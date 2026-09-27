@@ -28,7 +28,7 @@ datos. Este repo empezó VACÍO: todo se construyó aquí desde cero.
 ```bash
 npm run dev / build / start
 npm run lint                  # ESLint (flat config: next/core-web-vitals + ts)
-npm test                      # 111 tests (motor, leads, OPAEF, parse, share, proyección, equilibrio, embed, url)
+npm test                      # 114 tests (motor, leads, OPAEF, parse, share, proyección, equilibrio, embed, url, env)
 node scripts/smoke-e2e.mjs    # E2E en Chromium (requiere servidor en :3000;
                               # ejecutable en /opt/pw-browsers/chromium)
 ```
@@ -70,8 +70,12 @@ eso las páginas no lo declaran (og:title/description salen de title/desc).
   cálculo + municipio + dominio anfitrión, sin cookies) en `EMBED_LOG_FILE`;
   `/panel` (protegido por `src/middleware.ts` con PANEL_USER/PANEL_PASS) los
   muestra. Lógica en `src/lib/track/`.
-- `src/app/api/lead/route.ts` — leads (rate-limit; reenvía a
-  `LEAD_WEBHOOK_URL` si existe, si no los deja en el log).
+- `src/app/api/lead/route.ts` — leads (rate-limit; email SMTP + fichero
+  JSONL + webhook, con límite de 12 s por vía externa).
+- Variables de entorno de servidor: leerlas SIEMPRE con `env()` de
+  `src/lib/env` (vacío = no definida). La plantilla `.env.example` deja
+  claves en blanco y `process.env.X ?? defecto` NO aplica el defecto con "":
+  así se perdieron leads en producción (ENOENT al abrir '').
 - Extender a nuevos municipios/años = añadir registros de datos. NUNCA
   acoplar lógica fiscal a componentes.
 
