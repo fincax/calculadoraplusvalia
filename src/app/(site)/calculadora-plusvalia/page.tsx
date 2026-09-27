@@ -3,8 +3,8 @@ import Link from "next/link";
 import PlusvaliaCalculator from "@/components/calculator/PlusvaliaCalculator";
 import CoefficientTable from "@/components/CoefficientTable";
 import { listMunicipalities } from "@/lib/plusvalia/data/municipalities";
+import { SITE_URL } from "@/lib/site/url";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://fincax.es";
 
 export const metadata: Metadata = {
   title:

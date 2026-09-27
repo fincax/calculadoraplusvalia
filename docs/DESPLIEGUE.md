@@ -7,10 +7,18 @@ automático.
 
 ## 0. Requisitos
 
-- Un servidor en Clouding.io con **Ubuntu 22.04 o 24.04** (2 GB RAM es
-  suficiente). Apunta su IP pública.
-- Un dominio (p. ej. `fincax.es`) con un registro **A** apuntando a esa IP
-  (y otro para `www` si lo quieres).
+- Un servidor en Clouding.io con **Ubuntu 24.04 o 26.04** (mínimo 2 GB de
+  RAM: compilar consume ~1,1 GB; en producción: 2 vCores / 4 GB / 30 GB).
+  Apunta su IP pública.
+- El dominio **`calculadoraplusvalia.com`** (contratado en IONOS) apuntando
+  a esa IP. En IONOS → Dominios → `calculadoraplusvalia.com` → **DNS**:
+  - registro **A** con host `@` → IP del VPS;
+  - registro **A** con host `www` → IP del VPS (o CNAME `www` → `@`);
+  - **borra** los registros **AAAA** que IONOS crea por defecto (apuntan a su
+    página de aparcamiento por IPv6 y harían fallar el certificado SSL), y
+    cualquier otro **A** de `@`/`www` que no sea el del VPS.
+  - Comprobar desde PowerShell: `nslookup calculadoraplusvalia.com` debe
+    devolver la IP del VPS.
 - En el panel de Clouding.io, en el firewall del servidor, abre solo los
   puertos **22 (SSH), 80 (HTTP) y 443 (HTTPS)**.
 
@@ -57,7 +65,7 @@ cd /opt/fincax/app
 # Variables de entorno de producción
 cp .env.example .env
 nano .env
-#   NEXT_PUBLIC_SITE_URL=https://fincax.es
+#   NEXT_PUBLIC_SITE_URL=https://calculadoraplusvalia.com
 #   NEXT_PUBLIC_WHATSAPP_NUMBER=34XXXXXXXXX   (opcional)
 #   LEAD_WEBHOOK_URL=                          (opcional)
 
@@ -73,18 +81,18 @@ Comprueba que responde: `curl -I http://localhost:3000` → `200 OK`.
 ## 5. Nginx + SSL
 
 ```bash
-cp /opt/fincax/app/deploy/nginx.conf.example /etc/nginx/sites-available/fincax
-nano /etc/nginx/sites-available/fincax    # ajusta server_name a tu dominio
-ln -s /etc/nginx/sites-available/fincax /etc/nginx/sites-enabled/
-rm -f /etc/nginx/sites-enabled/default
+cp /opt/fincax/app/deploy/nginx.conf.example /etc/nginx/sites-available/calculadoraplusvalia
+ln -s /etc/nginx/sites-available/calculadoraplusvalia /etc/nginx/sites-enabled/
+rm -f /etc/nginx/sites-enabled/default    # servidor nuevo y dedicado: sobra
 nginx -t && systemctl reload nginx
 
 # Certificado SSL gratuito (renueva solo)
 apt install -y certbot python3-certbot-nginx
-certbot --nginx -d fincax.es -d www.fincax.es
+certbot --nginx -d calculadoraplusvalia.com -d www.calculadoraplusvalia.com
 ```
 
-Tu web ya está en `https://tudominio` ✅
+La calculadora ya está en `https://calculadoraplusvalia.com` ✅
+(`www.` redirige al dominio sin `www`, y la raíz a `/calculadora-plusvalia`).
 
 ## 6. Despliegue automático desde GitHub Actions
 
@@ -141,56 +149,11 @@ pm2 restart fincax-web    # reinicio manual
 
 ## Integración en fincax.es (sección «Herramientas profesionales»)
 
-Esta aplicación está pensada como **una herramienta más** de la sección
-«Herramientas profesionales · Servicios que te ayudan a decidir» de
-fincax.es (junto a la valoración con IA, la calculadora hipotecaria y el
-comparador). Su raíz `/` redirige a `/calculadora-plusvalia` y su cabecera
-enlaza de vuelta a fincax.es. Dos formas de publicarla bajo tu dominio:
-
-### Opción A — Subdominio (la más simple)
-
-1. Crea un registro **A**: `calculadora.fincax.es → IP del VPS`.
-2. En `deploy/nginx.conf.example`, usa `server_name calculadora.fincax.es;`.
-3. `certbot --nginx -d calculadora.fincax.es`.
-4. `.env`: `NEXT_PUBLIC_SITE_URL=https://calculadora.fincax.es`.
-5. En la web principal, añade la tarjeta de la herramienta enlazando a
-   `https://calculadora.fincax.es`.
-
-### Opción B — Misma URL que la web principal (`fincax.es/calculadora-plusvalia`)
-
-Solo si la web principal de fincax.es se sirve desde el **mismo Nginx** (o
-puedes tocar su configuración). En el `server {}` del dominio principal,
-añade un proxy de esa ruta hacia esta app:
-
-```nginx
-location /calculadora-plusvalia {
-    proxy_pass http://127.0.0.1:3000;
-    proxy_http_version 1.1;
-    proxy_set_header Host $host;
-    proxy_set_header X-Forwarded-Proto $scheme;
-}
-location /_next/ {          # estáticos de la app Next.js
-    proxy_pass http://127.0.0.1:3000;
-    proxy_set_header Host $host;
-}
-location /api/lead {        # API de leads de la calculadora
-    proxy_pass http://127.0.0.1:3000;
-    proxy_set_header Host $host;
-}
-# Calculadora embebible, su script, su seguimiento y el panel de uso
-location ~ ^/(embed|embed\.js$|api/embed-event|panel|politica-privacidad) {
-    proxy_pass http://127.0.0.1:3000;
-    proxy_set_header Host $host;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto $scheme;
-}
-```
-
-> Ojo: si la web principal también usa Next.js, el `location /_next/`
-> entraría en conflicto; en ese caso usa la Opción A (subdominio). Con una
-> web principal en **Laravel** (el caso de fincax.es) también se recomienda
-> la Opción A: rutas como `/politica-privacidad`, `/sitemap.xml` o
-> `/robots.txt` existirían en las dos aplicaciones. Guía en `docs/EMBEBER.md`.
+La calculadora vive en su **dominio propio, `calculadoraplusvalia.com`**, en
+este VPS (independiente de la web Laravel de fincax.es). Su cabecera enlaza
+de vuelta a fincax.es, y fincax.es la muestra dentro de una de sus páginas
+mediante el embebido (`embed.js`): pasos en `docs/EMBEBER.md` y vista Blade
+lista en `docs/laravel/`. No hace falta tocar el servidor de la web Laravel.
 
 ### Texto sugerido para la tarjeta de la herramienta
 

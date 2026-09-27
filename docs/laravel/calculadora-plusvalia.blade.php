@@ -10,8 +10,8 @@
 
 @push('head')
     <meta name="description" content="Calcula gratis la plusvalía municipal al vender, heredar o donar un inmueble en Sevilla y provincia. Método objetivo y real, bonificaciones y dónde pagar.">
-    {{-- La versión completa (indexable) vive en el subdominio: Google concentra ahí el posicionamiento. --}}
-    <link rel="canonical" href="https://calculadora.fincax.es/calculadora-plusvalia">
+    {{-- La versión completa (indexable) vive en calculadoraplusvalia.com: Google concentra ahí el posicionamiento. --}}
+    <link rel="canonical" href="https://calculadoraplusvalia.com/calculadora-plusvalia">
 @endpush
 
 @section('content')
@@ -24,14 +24,14 @@
     </p>
 
     <div id="fincax-plusvalia"></div>
-    <script src="https://calculadora.fincax.es/embed.js" async></script>
+    <script src="https://calculadoraplusvalia.com/embed.js" async></script>
     <noscript>
-        <a href="https://calculadora.fincax.es/calculadora-plusvalia">Abrir la calculadora de plusvalía</a>
+        <a href="https://calculadoraplusvalia.com/calculadora-plusvalia">Abrir la calculadora de plusvalía</a>
     </noscript>
 
     <p style="margin-top: 16px;">
         ¿Prefieres verla a pantalla completa?
-        <a href="https://calculadora.fincax.es/calculadora-plusvalia">Abrir la calculadora en su propia página</a>.
+        <a href="https://calculadoraplusvalia.com/calculadora-plusvalia">Abrir la calculadora en su propia página</a>.
     </p>
 </section>
 @endsection

@@ -1,46 +1,29 @@
 # Integrar la calculadora en otras webs (embebido)
 
-La Calculadora de Plusvalía Municipal de FINCAX puede integrarse en cualquier
-web (gestorías, abogados, otras inmobiliarias, blogs del sector) mediante un
-`iframe` responsivo. Sigue funcionando además como app propia en
-`fincax.es/calculadora-plusvalia`.
+La Calculadora de Plusvalía Municipal de FINCAX vive en su dominio propio,
+**`https://calculadoraplusvalia.com`** (app Next.js en el VPS de Clouding), y
+puede integrarse en cualquier web —la propia fincax.es, gestorías, abogados,
+otras inmobiliarias, blogs del sector— mediante un `iframe` responsivo.
 
-## En la propia web de FINCAX (fincax.es)
+Código de integración (el mismo para todos):
 
-La calculadora es una app Next.js que corre en el VPS; la web principal puede
-estar hecha con otra herramienta (WordPress, Wix, etc.). La forma más sencilla
-y robusta de unirlas es:
+```html
+<div id="fincax-plusvalia"></div>
+<script src="https://calculadoraplusvalia.com/embed.js" async></script>
+```
 
-1. **Publicar la app en un subdominio**: `calculadora.fincax.es` (Opción A de
-   `docs/DESPLIEGUE.md`), con `NEXT_PUBLIC_SITE_URL=https://calculadora.fincax.es`
-   en el `.env` (si no, las canónicas y el enlace «FINCAX» del crédito apuntarían
-   a una ruta que no existe en la web principal).
-2. **Crear en fincax.es una página** «Calculadora de plusvalía» (p. ej.
-   `fincax.es/calculadora-plusvalia`) dentro de «Herramientas profesionales» y
-   pegar en ella un bloque de HTML personalizado con:
+Para arrancar en un municipio concreto, añadir `data-municipio` con su
+identificador (el mismo de la URL de su página, p. ej. `dos-hermanas`):
 
-   ```html
-   <div id="fincax-plusvalia"></div>
-   <script src="https://calculadora.fincax.es/embed.js" async></script>
-   ```
+```html
+<div id="fincax-plusvalia" data-municipio="dos-hermanas"></div>
+<script src="https://calculadoraplusvalia.com/embed.js" async></script>
+```
 
-   - **WordPress** (Gutenberg): bloque «HTML personalizado». En Elementor:
-     widget «HTML». Si hay un plugin de caché/optimización (WP Rocket,
-     Autoptimize…), excluir `embed.js` de «retrasar/combinar JavaScript».
-   - **Wix / Squarespace / Webflow**: elemento «Insertar código / Embed».
-     Estos constructores meten el código en su propio marco de alto fijo, así
-     que el alto automático no llega: usar directamente el iframe con un alto
-     generoso (1.900 px en móvil cubre formulario + resultados):
+El script inserta un `iframe` a `/embed/calculadora-plusvalia` y lo ajusta de
+alto automáticamente (mensajes `postMessage`). No usa cookies.
 
-     ```html
-     <iframe src="https://calculadora.fincax.es/embed/calculadora-plusvalia"
-             title="Calculadora de Plusvalía Municipal (FINCAX)"
-             allow="clipboard-write" style="width:100%;height:1900px;border:0"></iframe>
-     ```
-3. En la tarjeta de «Herramientas profesionales» de la home, enlazar a esa
-   página.
-
-### fincax.es es Laravel (PHP): pasos exactos
+## En la web de FINCAX (fincax.es, hecha en Laravel)
 
 La vista lista para copiar está en `docs/laravel/calculadora-plusvalia.blade.php`.
 
@@ -60,46 +43,34 @@ La vista lista para copiar está en `docs/laravel/calculadora-plusvalia.blade.ph
 4. Si hay caché de rutas/vistas en producción:
    `php artisan route:cache && php artisan view:cache`.
 5. Si la web Laravel envía una cabecera Content-Security-Policy (p. ej. con
-   `spatie/laravel-csp` o desde Nginx), añadir `https://calculadora.fincax.es`
-   a `script-src` y `frame-src`. Si no hay CSP, no hay que tocar nada.
+   `spatie/laravel-csp` o desde su servidor web), añadir
+   `https://calculadoraplusvalia.com` a `script-src` y `frame-src`. Si no hay
+   CSP, no hay que tocar nada.
 
-La vista lleva `<link rel="canonical">` hacia la página completa del
-subdominio: así Google no ve dos páginas compitiendo por la misma búsqueda y
-concentra el posicionamiento en la que tiene todo el contenido.
+SEO: el contenido de un iframe **no posiciona** para la página que lo
+contiene (la versión embebida es además `noindex`). Lo que posiciona es
+`calculadoraplusvalia.com` (la calculadora y las 105 páginas de municipios,
+con sitemap propio). Por eso la vista de Laravel lleva un
+`<link rel="canonical">` hacia `https://calculadoraplusvalia.com/calculadora-plusvalia`:
+Google no ve dos páginas compitiendo por la misma búsqueda y concentra el
+posicionamiento en la que tiene todo el contenido. El enlace desde fincax.es
+hacia el dominio de la calculadora además le transmite autoridad.
 
-SEO: el contenido de un iframe **no posiciona** para la página que lo contiene
-(la versión embebida es además `noindex`). Lo que posiciona son las páginas de
-la app (`calculadora.fincax.es/calculadora-plusvalia` y las 105 de municipios,
-con sitemap propio). Por eso conviene dar de alta el subdominio en Search
-Console y que la página de fincax.es tenga su propio texto (título H1, una
-explicación breve) y un enlace a la versión completa.
+## En otras plataformas
 
-Si la web principal se sirve desde el mismo Nginx del VPS, la alternativa es
-la Opción B (`fincax.es/calculadora-plusvalia` directamente, sin iframe; mejor
-para SEO). En ese caso el snippet para terceros usa `https://fincax.es/embed.js`.
+- **WordPress** (Gutenberg): bloque «HTML personalizado». En Elementor: widget
+  «HTML». Si hay un plugin de caché/optimización (WP Rocket, Autoptimize…),
+  excluir `embed.js` de «retrasar/combinar JavaScript».
+- **Wix / Squarespace / Webflow**: elemento «Insertar código / Embed». Estos
+  constructores meten el código en su propio marco de alto fijo, así que el
+  alto automático no llega: usar directamente el iframe con un alto generoso
+  (1.900 px en móvil cubre formulario + resultados):
 
-## Cómo integrarla en webs de terceros (lo que se le da al cliente)
-
-Pegar esto donde quiera que aparezca la calculadora:
-
-```html
-<div id="fincax-plusvalia"></div>
-<script src="https://fincax.es/embed.js" async></script>
-```
-
-Para arrancar en un municipio concreto, añadir `data-municipio` con el
-identificador (slug) del municipio:
-
-```html
-<div id="fincax-plusvalia" data-municipio="dos-hermanas"></div>
-<script src="https://fincax.es/embed.js" async></script>
-```
-
-El script inserta un `iframe` a `/embed/calculadora-plusvalia` y lo ajusta de
-alto automáticamente (mensajes `postMessage`). No usa cookies.
-
-> El dominio del snippet es el de la app: `https://fincax.es` con la Opción B
-> del despliegue o `https://calculadora.fincax.es` con la Opción A.
+  ```html
+  <iframe src="https://calculadoraplusvalia.com/embed/calculadora-plusvalia"
+          title="Calculadora de Plusvalía Municipal (FINCAX)"
+          allow="clipboard-write" style="width:100%;height:1900px;border:0"></iframe>
+  ```
 
 ## Cómo funciona por dentro
 
@@ -109,8 +80,8 @@ alto automáticamente (mensajes `postMessage`). No usa cookies.
   cabecera/pie del sitio** (grupo de rutas distinto del sitio público). Se
   sirve con `frame-ancestors *` para que cualquier web pueda enmarcarla; el
   resto del sitio mantiene `X-Frame-Options: DENY`.
-- `src/components/calculator/EmbedCalculator.tsx`: comunica el alto a la web
-  anfitriona y registra el uso (vista y cálculos).
+- `src/components/calculator/EmbedCalculator.tsx`: comunica el alto del
+  contenido a la web anfitriona y registra el uso (vista y cálculos).
 
 ## Seguimiento de uso y panel
 
@@ -118,16 +89,14 @@ alto automáticamente (mensajes `postMessage`). No usa cookies.
   datos personales/económicos**: tipo (vista o cálculo), municipio y dominio de
   la web anfitriona. Se guarda en `EMBED_LOG_FILE` (JSONL; por defecto
   `embed-events.jsonl`).
-- Panel de uso en **`/panel`**: tabla de webs integradoras con vistas y
-  cálculos. Protegido por autenticación básica con `PANEL_USER` / `PANEL_PASS`
-  (si no se definen, queda cerrado). Ejemplo de acceso: abrir
-  `https://fincax.es/panel` e introducir el usuario y la contraseña.
+- Panel de uso en **`https://calculadoraplusvalia.com/panel`**: tabla de webs
+  integradoras con vistas y cálculos. Protegido por autenticación básica con
+  `PANEL_USER` / `PANEL_PASS` del `.env` (si no se definen, queda cerrado).
 - La política de privacidad recoge esta medición propia y agregada.
 
 ## Notas
 
 - La CSP de la web anfitriona debe permitir cargar el script e iframe de
-  `fincax.es` (la mayoría no aplican CSP estricta; si la aplican, deben añadir
-  `fincax.es` a `script-src` y `frame-src`).
-- Recomendado servir todo por HTTPS (obligatorio para que el iframe cargue en
-  webs HTTPS).
+  `calculadoraplusvalia.com` (la mayoría no aplican CSP estricta; si la
+  aplican, deben añadirlo a `script-src` y `frame-src`).
+- Todo se sirve por HTTPS (obligatorio para que el iframe cargue en webs HTTPS).

@@ -1,9 +1,8 @@
 import { redirect } from "next/navigation";
 
 /**
- * Esta aplicación es una herramienta de la sección «Herramientas
- * profesionales» de fincax.es, no una web paralela: la raíz redirige
- * directamente a la calculadora.
+ * La raíz lleva directamente a la calculadora. La redirección permanente
+ * (308) se declara en next.config.ts; esto es solo un respaldo.
  */
 export default function HomePage() {
   redirect("/calculadora-plusvalia");

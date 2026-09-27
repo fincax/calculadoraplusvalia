@@ -3,7 +3,7 @@
  *
  * Uso en cualquier web:
  *   <div id="fincax-plusvalia" data-municipio="dos-hermanas"></div>
- *   <script src="https://fincax.es/embed.js" async></script>
+ *   <script src="https://calculadoraplusvalia.com/embed.js" async></script>
  *
  * (data-municipio es opcional; si se omite, arranca en Sevilla.)
  * Inserta un iframe responsivo que se ajusta de alto automáticamente.
@@ -11,7 +11,7 @@
 (function () {
   var script = document.currentScript;
   // Origen desde el que se sirve este script (dominio de FINCAX).
-  var origin = "https://fincax.es";
+  var origin = "https://calculadoraplusvalia.com";
   try {
     origin = new URL(script.src).origin;
   } catch {}

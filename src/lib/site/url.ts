@@ -1,6 +1,6 @@
 /** URL pública del sitio (SEO, enlaces compartibles, crédito del embebido). */
 export const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://fincax.es"
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://calculadoraplusvalia.com"
 ).replace(/\/+$/, "");
 
 /**
