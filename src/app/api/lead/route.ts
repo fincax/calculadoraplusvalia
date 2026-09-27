@@ -107,15 +107,16 @@ async function deliverByEmail(lead: StoredLead): Promise<boolean> {
   return true;
 }
 
-async function backupToFile(lead: StoredLead): Promise<void> {
+async function backupToFile(lead: StoredLead): Promise<boolean> {
   const file =
     env("LEAD_LOG_FILE") ?? path.join(process.cwd(), "leads.jsonl");
   await appendFile(file, JSON.stringify(lead) + "\n", "utf8");
+  return true;
 }
 
-async function forwardToWebhook(lead: StoredLead): Promise<void> {
+async function forwardToWebhook(lead: StoredLead): Promise<boolean> {
   const webhook = env("LEAD_WEBHOOK_URL");
-  if (!webhook) return;
+  if (!webhook) return false;
   const res = await fetch(webhook, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -123,6 +124,7 @@ async function forwardToWebhook(lead: StoredLead): Promise<void> {
     signal: AbortSignal.timeout(DELIVERY_TIMEOUT_MS),
   });
   if (!res.ok) throw new Error(`Webhook respondió ${res.status}`);
+  return true;
 }
 
 export async function POST(request: Request) {
@@ -168,8 +170,11 @@ export async function POST(request: Request) {
     backupToFile(lead),
     withTimeout(forwardToWebhook(lead), "webhook"),
   ]);
+  // Cada vía devuelve true SOLO si entregó el lead (false = no configurada).
+  // Antes, un webhook sin configurar contaba como entregado y, si fallaban
+  // email y fichero, el lead no llegaba ni a la red de seguridad del log.
   const anyDelivered = outcomes.some(
-    (o) => o.status === "fulfilled" && o.value !== false
+    (o) => o.status === "fulfilled" && o.value === true
   );
   for (const o of outcomes) {
     if (o.status === "rejected") console.error("[lead] vía fallida:", o.reason);
