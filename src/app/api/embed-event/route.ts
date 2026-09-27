@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { appendFile } from "node:fs/promises";
 import path from "node:path";
 import { parseEmbedEvent, type StoredEmbedEvent } from "@/lib/track/embed";
+import { env } from "@/lib/env";
 
 /**
  * Seguimiento propio del uso de la calculadora embebida. Cookieless y sin
@@ -47,7 +48,7 @@ export async function POST(request: Request) {
 
   const stored: StoredEmbedEvent = { ...event, ts: new Date().toISOString() };
   const file =
-    process.env.EMBED_LOG_FILE ??
+    env("EMBED_LOG_FILE") ??
     path.join(process.cwd(), "embed-events.jsonl");
   try {
     await appendFile(file, JSON.stringify(stored) + "\n", "utf8");

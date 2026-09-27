@@ -6,15 +6,19 @@
  */
 import { createTransport } from "nodemailer";
 
-const { LEAD_SMTP_HOST: host, LEAD_SMTP_USER: user, LEAD_SMTP_PASS: pass } =
-  process.env;
+// Las claves vacías de la plantilla .env cuentan como no definidas.
+const env = (name) => process.env[name]?.trim() || undefined;
+
+const host = env("LEAD_SMTP_HOST");
+const user = env("LEAD_SMTP_USER");
+const pass = env("LEAD_SMTP_PASS");
 if (!host || !user || !pass) {
   console.error("Faltan LEAD_SMTP_HOST, LEAD_SMTP_USER o LEAD_SMTP_PASS en el .env");
   process.exit(1);
 }
-const port = Number(process.env.LEAD_SMTP_PORT ?? 587);
-const secure = process.env.LEAD_SMTP_SECURE === "true";
-const to = process.env.LEAD_TO ?? "fincaxsevilla@gmail.com";
+const port = Number(env("LEAD_SMTP_PORT") ?? 587);
+const secure = env("LEAD_SMTP_SECURE") === "true";
+const to = env("LEAD_TO") ?? "fincaxsevilla@gmail.com";
 console.log(`Conectando a ${host}:${port} (secure=${secure}) como ${user}…`);
 
 const transport = createTransport({
@@ -25,13 +29,16 @@ const transport = createTransport({
   connectionTimeout: 8_000,
   greetingTimeout: 8_000,
   socketTimeout: 10_000,
+  // Muestra cada paso (IP resuelta, conexión, TLS, autenticación) para
+  // diagnosticar; nodemailer nunca imprime la contraseña.
+  logger: true,
 });
 
 try {
   await transport.verify();
   console.log("OK: conexión y credenciales correctas.");
   await transport.sendMail({
-    from: process.env.LEAD_FROM ?? user,
+    from: env("LEAD_FROM") ?? user,
     to,
     subject: "Prueba — Calculadora de Plusvalía",
     text: "Si recibes este email, el envío de contactos de la calculadora funciona.",

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { appendFile } from "node:fs/promises";
 import path from "node:path";
+import { env } from "@/lib/env";
 import { parseLead, type CleanLead } from "@/lib/leads/validation";
 
 /**
@@ -68,23 +69,23 @@ function rateLimited(ip: string): boolean {
 }
 
 async function deliverByEmail(lead: StoredLead): Promise<boolean> {
-  const host = process.env.LEAD_SMTP_HOST;
-  const user = process.env.LEAD_SMTP_USER;
-  const pass = process.env.LEAD_SMTP_PASS;
+  const host = env("LEAD_SMTP_HOST");
+  const user = env("LEAD_SMTP_USER");
+  const pass = env("LEAD_SMTP_PASS");
   if (!host || !user || !pass) return false;
 
   const { createTransport } = await import("nodemailer");
   const transport = createTransport({
     host,
-    port: Number(process.env.LEAD_SMTP_PORT ?? 587),
-    secure: process.env.LEAD_SMTP_SECURE === "true",
+    port: Number(env("LEAD_SMTP_PORT") ?? 587),
+    secure: env("LEAD_SMTP_SECURE") === "true",
     auth: { user, pass },
     connectionTimeout: 8_000,
     greetingTimeout: 8_000,
     socketTimeout: 10_000,
   });
 
-  const to = process.env.LEAD_TO ?? "fincaxsevilla@gmail.com";
+  const to = env("LEAD_TO") ?? "fincaxsevilla@gmail.com";
   const summaryLines = lead.summary
     ? Object.entries(lead.summary)
         .map(([k, v]) => `  · ${k}: ${v}`)
@@ -92,7 +93,7 @@ async function deliverByEmail(lead: StoredLead): Promise<boolean> {
     : "  (sin resumen)";
 
   await transport.sendMail({
-    from: process.env.LEAD_FROM ?? user,
+    from: env("LEAD_FROM") ?? user,
     to,
     replyTo: lead.contactType === "email" ? lead.contact : undefined,
     subject: `Nuevo lead — Calculadora de Plusvalía (${lead.summary?.municipality ?? "Sevilla"})`,
@@ -108,12 +109,12 @@ async function deliverByEmail(lead: StoredLead): Promise<boolean> {
 
 async function backupToFile(lead: StoredLead): Promise<void> {
   const file =
-    process.env.LEAD_LOG_FILE ?? path.join(process.cwd(), "leads.jsonl");
+    env("LEAD_LOG_FILE") ?? path.join(process.cwd(), "leads.jsonl");
   await appendFile(file, JSON.stringify(lead) + "\n", "utf8");
 }
 
 async function forwardToWebhook(lead: StoredLead): Promise<void> {
-  const webhook = process.env.LEAD_WEBHOOK_URL;
+  const webhook = env("LEAD_WEBHOOK_URL");
   if (!webhook) return;
   const res = await fetch(webhook, {
     method: "POST",
