@@ -144,6 +144,7 @@ git push -u origin mi-cambio
 pm2 status                # estado de la app
 pm2 logs fincax-web       # logs en vivo (aquí aparecen los leads si no hay webhook)
 pm2 restart fincax-web    # reinicio manual
+node --env-file=.env scripts/test-smtp.mjs   # prueba el email de los leads
 /opt/fincax/app/scripts/deploy.sh   # despliegue manual
 ```
 
