@@ -32,6 +32,23 @@ const hits = new Map<string, { count: number; windowStart: number }>();
 const WINDOW_MS = 60_000;
 const MAX_PER_WINDOW = 5;
 
+// Tiempo máximo que puede tardar cada vía externa (SMTP, webhook). Sin
+// límite, un servidor de correo que no responde (puerto bloqueado, IPv6 sin
+// ruta…) dejaba la petición colgada hasta que el proxy cortaba con un 504,
+// aunque el lead ya estuviera guardado en el fichero.
+const DELIVERY_TIMEOUT_MS = 12_000;
+
+function withTimeout<T>(promise: Promise<T>, what: string): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(
+      () => reject(new Error(`${what}: sin respuesta en ${DELIVERY_TIMEOUT_MS / 1000} s`)),
+      DELIVERY_TIMEOUT_MS
+    );
+  });
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+}
+
 function pruneHits(now: number): void {
   for (const [ip, entry] of hits) {
     if (now - entry.windowStart > WINDOW_MS) hits.delete(ip);
@@ -62,6 +79,9 @@ async function deliverByEmail(lead: StoredLead): Promise<boolean> {
     port: Number(process.env.LEAD_SMTP_PORT ?? 587),
     secure: process.env.LEAD_SMTP_SECURE === "true",
     auth: { user, pass },
+    connectionTimeout: 8_000,
+    greetingTimeout: 8_000,
+    socketTimeout: 10_000,
   });
 
   const to = process.env.LEAD_TO ?? "fincaxsevilla@gmail.com";
@@ -99,6 +119,7 @@ async function forwardToWebhook(lead: StoredLead): Promise<void> {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(lead),
+    signal: AbortSignal.timeout(DELIVERY_TIMEOUT_MS),
   });
   if (!res.ok) throw new Error(`Webhook respondió ${res.status}`);
 }
@@ -142,9 +163,9 @@ export async function POST(request: Request) {
   // Se intentan todas las vías; basta con que una tenga éxito. Los fallos se
   // registran pero no se ocultan datos: el lead siempre acaba en algún sitio.
   const outcomes = await Promise.allSettled([
-    deliverByEmail(lead),
+    withTimeout(deliverByEmail(lead), "email"),
     backupToFile(lead),
-    forwardToWebhook(lead),
+    withTimeout(forwardToWebhook(lead), "webhook"),
   ]);
   const anyDelivered = outcomes.some(
     (o) => o.status === "fulfilled" && o.value !== false
