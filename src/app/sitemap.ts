@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { listMunicipalities } from "@/lib/plusvalia/data/municipalities";
+import { SITE_URL } from "@/lib/site/url";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://fincax.es";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const municipios: MetadataRoute.Sitemap = listMunicipalities()

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { SITE_URL } from "@/lib/site/url";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://fincax.es";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

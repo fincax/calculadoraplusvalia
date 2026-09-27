@@ -1,11 +1,20 @@
-# Configuración de Nginx para FINCAX (proxy inverso hacia Next.js en :3000).
-# Copiar en el servidor como /etc/nginx/sites-available/fincax y ajustar el
-# dominio. Certbot añadirá después el bloque SSL automáticamente.
+# Configuración de Nginx para la Calculadora de Plusvalía (proxy inverso hacia
+# Next.js en :3000). Copiar en el servidor como
+# /etc/nginx/sites-available/calculadoraplusvalia y ajustar el dominio si
+# cambia. Certbot añadirá después los bloques SSL automáticamente.
+
+# www → dominio sin www (una sola URL para Google)
+server {
+    listen 80;
+    listen [::]:80;
+    server_name www.calculadoraplusvalia.com;
+    return 301 https://calculadoraplusvalia.com$request_uri;
+}
 
 server {
     listen 80;
     listen [::]:80;
-    server_name fincax.es www.fincax.es;
+    server_name calculadoraplusvalia.com;
 
     # Compresión
     gzip on;

@@ -11,6 +11,7 @@ import {
   plusvaliaGestor,
 } from "@/lib/plusvalia/data/opaef";
 import { formatDateES, formatPct } from "@/lib/plusvalia/format";
+import { SITE_URL } from "@/lib/site/url";
 
 /**
  * Páginas por municipio de la provincia (SEO local:
@@ -19,8 +20,6 @@ import { formatDateES, formatPct } from "@/lib/plusvalia/format";
  */
 
 export const dynamicParams = false;
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://fincax.es";
 
 function provinceMunicipalities() {
   return listMunicipalities().filter((m) => m.code !== "sevilla");

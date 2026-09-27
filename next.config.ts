@@ -6,6 +6,14 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
+        // La calculadora es la portada del dominio propio
+        // (calculadoraplusvalia.com): redirección permanente (308) para que
+        // Google consolide la raíz en la página principal.
+        source: "/",
+        destination: "/calculadora-plusvalia",
+        permanent: true,
+      },
+      {
         // Sevilla capital se sirve en la página principal (no tiene página
         // por municipio, para no canibalizar la consulta). Redirigimos el
         // slug para no dejar un 404 indexable.
