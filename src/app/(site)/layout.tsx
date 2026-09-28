@@ -79,9 +79,9 @@ export default function SiteLayout({
               ·{" "}
               <a
                 className="underline hover:text-brand-700"
-                href="mailto:fincaxsevilla@gmail.com"
+                href="mailto:hola@fincax.es"
               >
-                fincaxsevilla@gmail.com
+                hola@fincax.es
               </a>
             </p>
             <ul className="flex gap-4">

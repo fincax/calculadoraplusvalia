@@ -65,7 +65,7 @@ export default function LeadCapture({ result }: { result: CalculationResult }) {
   const whatsappHref = WHATSAPP_NUMBER
     ? `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(summaryText(result))}`
     : undefined;
-  const mailtoHref = `mailto:fincaxsevilla@gmail.com?subject=${encodeURIComponent(
+  const mailtoHref = `mailto:hola@fincax.es?subject=${encodeURIComponent(
     "Consulta plusvalía municipal — " + result.rules.municipalityName
   )}&body=${encodeURIComponent(summaryText(result))}`;
 
@@ -168,7 +168,7 @@ export default function LeadCapture({ result }: { result: CalculationResult }) {
           {status === "error" && (
             <p role="alert" className="text-xs font-medium text-red-700 sm:col-span-2">
               No se pudo enviar. Inténtalo de nuevo o escríbenos directamente a
-              fincaxsevilla@gmail.com.
+              hola@fincax.es.
             </p>
           )}
           <div className="flex flex-wrap gap-3 sm:col-span-2">
