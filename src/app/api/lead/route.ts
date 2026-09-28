@@ -85,7 +85,7 @@ async function deliverByEmail(lead: StoredLead): Promise<boolean> {
     socketTimeout: 10_000,
   });
 
-  const to = env("LEAD_TO") ?? "fincaxsevilla@gmail.com";
+  const to = env("LEAD_TO") ?? "hola@fincax.es";
   const summaryLines = lead.summary
     ? Object.entries(lead.summary)
         .map(([k, v]) => `  · ${k}: ${v}`)

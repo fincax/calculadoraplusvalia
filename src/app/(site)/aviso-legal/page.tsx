@@ -15,7 +15,7 @@ export default function AvisoLegalPage() {
       <h2 className="mt-8 text-xl font-semibold text-brand-900">Titularidad</h2>
       <p className="mt-2">
         Este sitio web es titularidad de FINCAX (Sevilla). Contacto:
-        fincaxsevilla@gmail.com.
+        hola@fincax.es.
       </p>
 
       <h2 className="mt-8 text-xl font-semibold text-brand-900">

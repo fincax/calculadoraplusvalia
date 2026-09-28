@@ -55,7 +55,7 @@ export default function CalculadoraPlusvaliaPage() {
         "@id": `${SITE_URL}/#organization`,
         name: "FINCAX",
         url: "https://fincax.es",
-        email: "fincaxsevilla@gmail.com",
+        email: "hola@fincax.es",
         address: {
           "@type": "PostalAddress",
           streetAddress: "Ronda de Triana 14E",

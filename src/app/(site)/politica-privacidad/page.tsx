@@ -38,7 +38,7 @@ export default function PrivacidadPage() {
       <ul className="mt-3 list-disc space-y-1 pl-5">
         <li>
           <strong>Responsable:</strong> FINCAX (Sevilla) ·
-          fincaxsevilla@gmail.com
+          hola@fincax.es
         </li>
         <li>
           <strong>Base jurídica:</strong> tu consentimiento expreso (art. 6.1.a
@@ -56,7 +56,7 @@ export default function PrivacidadPage() {
         <li>
           <strong>Derechos:</strong> puedes ejercer el acceso, rectificación,
           supresión, oposición, limitación y portabilidad escribiendo a
-          fincaxsevilla@gmail.com. También puedes reclamar ante la AEPD
+          hola@fincax.es. También puedes reclamar ante la AEPD
           (aepd.es).
         </li>
       </ul>

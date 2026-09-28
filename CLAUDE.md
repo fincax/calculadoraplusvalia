@@ -6,7 +6,7 @@ Contexto persistente para sesiones de Claude Code. Última actualización: 2026-
 
 Calculadora de Plusvalía Municipal (IIVTNU) para Sevilla y provincia, de
 **FINCAX** (agencia inmobiliaria de Sevilla, Ronda de Triana 14E, fundada
-2024; contacto: fincaxsevilla@gmail.com). Es una herramienta de la sección
+2024; contacto público: hola@fincax.es). Es una herramienta de la sección
 **«Herramientas Profesionales · Servicios que te ayudan a decidir»** de
 [fincax.es](https://fincax.es), junto a la valoración con IA, la calculadora
 hipotecaria y el comparador. Objetivo de negocio: captar leads de alta
@@ -185,6 +185,10 @@ le pide (¡pedírselos es la vía para desbloquear datos!).
    (`LEAD_SMTP_*` + `LEAD_TO`; con Gmail, contraseña de aplicación), copia en
    fichero (`LEAD_LOG_FILE`, por defecto `leads.jsonl`) y/o `LEAD_WEBHOOK_URL`.
    Basta configurar UNA para no perder ningún contacto.
+   HECHO (28/09/2026): producción envía por **Brevo** (`smtp-relay.brevo.com`
+   :587, el mismo relay que la web Laravel) desde `hola@fincax.es` y recibe
+   en `LEAD_TO=hola@fincax.es`; probar con
+   `node --env-file=.env scripts/test-smtp.mjs`.
 5. SEO off-page: Search Console (sitemap + indexación), enlace desde la
    home de fincax.es (tarjeta redactada en `docs/DESPLIEGUE.md`), Google
    Business Profile, nota de prensa local, enlaces de gestorías/abogados.

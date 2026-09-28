@@ -18,7 +18,7 @@ if (!host || !user || !pass) {
 }
 const port = Number(env("LEAD_SMTP_PORT") ?? 587);
 const secure = env("LEAD_SMTP_SECURE") === "true";
-const to = env("LEAD_TO") ?? "fincaxsevilla@gmail.com";
+const to = env("LEAD_TO") ?? "hola@fincax.es";
 console.log(`Conectando a ${host}:${port} (secure=${secure}) como ${user}…`);
 
 const transport = createTransport({

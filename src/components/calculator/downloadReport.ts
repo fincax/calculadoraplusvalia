@@ -220,7 +220,7 @@ export function downloadPdfReport(result: CalculationResult): void {
     doc.setFontSize(8);
     setColor(GRAY);
     doc.text(
-      "FINCAX · Sevilla · fincax.es · fincaxsevilla@gmail.com",
+      "FINCAX · Sevilla · fincax.es · hola@fincax.es",
       M,
       pageH - 8
     );
