@@ -14,14 +14,16 @@ export function Fieldset({
   children: ReactNode;
 }) {
   return (
-    <fieldset className="rounded-xl border border-ink-300 bg-white p-5 sm:p-6">
-      <legend className="px-1 text-base font-semibold text-brand-900">
+    <fieldset className="min-w-0 border-t border-slate-200 pt-7 first-of-type:border-t-0 first-of-type:pt-0">
+      {/* float + clear: el legend se comporta como un título normal y no
+          se monta sobre la línea separadora del fieldset. */}
+      <legend className="float-left w-full text-lg font-extrabold text-navy-900">
         {legend}
       </legend>
       {description && (
-        <p className="mb-4 mt-1 text-sm text-ink-500">{description}</p>
+        <p className="clear-both mt-1 text-sm text-ink-500">{description}</p>
       )}
-      <div className="grid gap-4 sm:grid-cols-2">{children}</div>
+      <div className="clear-both grid gap-5 pt-4 sm:grid-cols-2">{children}</div>
     </fieldset>
   );
 }
@@ -43,7 +45,7 @@ export function Field({
 }) {
   return (
     <div className={className}>
-      <label htmlFor={id} className="block text-sm font-medium text-ink-900">
+      <label htmlFor={id} className="block text-sm font-semibold text-navy-900">
         {label}
       </label>
       {children}
@@ -62,7 +64,7 @@ export function Field({
 }
 
 export const inputClass =
-  "mt-1 block w-full rounded-lg border border-ink-300 bg-white px-3 py-2 text-sm text-ink-900 shadow-sm placeholder:text-ink-300 focus:border-brand-500";
+  "mt-1.5 block w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-ink-900 placeholder:text-ink-300 transition-colors focus:border-fincax-600";
 
 export function CheckboxRow({
   id,
@@ -84,11 +86,11 @@ export function CheckboxRow({
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
-        className="mt-0.5 h-4 w-4 rounded border-ink-300 accent-accent-600"
+        className="mt-0.5 h-4 w-4 rounded border-slate-300 accent-fincax-700"
         aria-describedby={help ? `${id}-help` : undefined}
       />
       <div>
-        <label htmlFor={id} className="text-sm font-medium text-ink-900">
+        <label htmlFor={id} className="text-sm font-semibold text-navy-900">
           {label}
         </label>
         {help && (

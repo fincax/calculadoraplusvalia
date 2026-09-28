@@ -74,7 +74,7 @@ export default function LeadCapture({ result }: { result: CalculationResult }) {
       aria-labelledby="titulo-lead"
       className="no-print mt-8 rounded-xl bg-brand-50 p-6 ring-1 ring-brand-200"
     >
-      <h3 id="titulo-lead" className="text-lg font-bold text-brand-900">
+      <h3 id="titulo-lead" className="text-lg font-extrabold text-navy-900">
         ¿Quieres pagar lo justo y sin errores?
       </h3>
       <p className="mt-1 max-w-2xl text-sm leading-relaxed text-ink-700">
@@ -102,7 +102,7 @@ export default function LeadCapture({ result }: { result: CalculationResult }) {
             <input
               id="lead-nombre"
               autoComplete="name"
-              className="mt-1 block w-full rounded-lg border border-ink-300 bg-white px-3 py-2 text-sm"
+              className="mt-1 block w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
@@ -118,7 +118,7 @@ export default function LeadCapture({ result }: { result: CalculationResult }) {
             <input
               id="lead-contacto"
               autoComplete="tel"
-              className="mt-1 block w-full rounded-lg border border-ink-300 bg-white px-3 py-2 text-sm"
+              className="mt-1 block w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
               value={contact}
               onChange={(e) => setContact(e.target.value)}
               required

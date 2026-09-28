@@ -140,7 +140,16 @@ ordenanzas, **pedir al usuario que suba el PDF** (ya lo hizo dos veces con
 - Tokens en `globals.css`: escala `brand-*` = neutros de marca; `accent-*`
   = rojo (usar `accent-600 #d21418` para botones con texto blanco —
   contraste AA; el rojo puro solo para acentos/hovers). Wordmark en
-  minúsculas: `finca` + `x` roja. Botón principal negro.
+  minúsculas: `finca` + `x` roja.
+- **Estilo de las herramientas de fincax.es** (valorador, simulador de
+  hipoteca; capturas aportadas por el usuario el 28/09/2026): cabecera
+  blanca con el logo real (`public/fincax-logo.png`, 298×97), banda roja
+  burdeos `fincax-800 #990000` con patrón de cruces (`.fincax-hero`,
+  componente `ToolHero`), título Nunito 900, píldoras y cifras; tarjeta
+  blanca del formulario superpuesta (-mt-20, rounded-2xl, shadow-xl) sobre
+  fondo `surface #f6f7fb`; resultado en tarjeta azul marino `navy-900
+  #111827`; botón principal rojo `fincax-700`. Nunito autoalojada vía
+  `@fontsource-variable/nunito` (sin Google Fonts: CSP y RGPD).
 
 ## Flujo de trabajo git/CI/CD
 

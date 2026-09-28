@@ -295,9 +295,12 @@ export default function PlusvaliaCalculator({
       <form
         onSubmit={onSubmit}
         noValidate
-        className="no-print mt-8 space-y-6"
+        className="no-print space-y-7 rounded-2xl bg-white p-5 shadow-xl ring-1 ring-black/5 sm:p-8"
         aria-label="Formulario de cálculo de la plusvalía municipal"
       >
+        <h2 className="text-2xl font-extrabold text-navy-900">
+          Introduce los datos de la operación
+        </h2>
         <Fieldset
           legend="1. La operación"
           description="Dónde está el inmueble y cómo se transmite."
@@ -339,10 +342,10 @@ export default function PlusvaliaCalculator({
               {(Object.keys(transferTypeLabels) as TransferType[]).map((t) => (
                 <label
                   key={t}
-                  className={`cursor-pointer rounded-lg border px-3 py-2 text-center text-sm font-medium transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-brand-500 has-[:focus-visible]:ring-offset-1 ${
+                  className={`cursor-pointer rounded-xl border px-3 py-2.5 text-center text-sm font-bold transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-fincax-600 has-[:focus-visible]:ring-offset-1 ${
                     form.transferType === t
-                      ? "border-accent-600 bg-brand-50 text-brand-900"
-                      : "border-ink-300 bg-white text-ink-700 hover:border-brand-400"
+                      ? "border-fincax-700 bg-fincax-700 text-white shadow-sm"
+                      : "border-slate-300 bg-white text-ink-700 hover:border-fincax-600 hover:text-fincax-700"
                   }`}
                 >
                   <input
@@ -680,21 +683,21 @@ export default function PlusvaliaCalculator({
         <div className="flex flex-wrap items-center gap-3">
           <button
             type="submit"
-            className="rounded-lg bg-brand-900 px-8 py-3 text-base font-semibold text-white shadow-md transition-colors hover:bg-brand-800"
+            className="rounded-xl bg-fincax-700 px-8 py-3.5 text-base font-extrabold text-white shadow-lg shadow-fincax-700/20 transition-colors hover:bg-fincax-900"
           >
             Calcular la plusvalía
           </button>
           <button
             type="button"
             onClick={copyShareLink}
-            className="rounded-lg border border-brand-700 px-5 py-3 text-sm font-semibold text-brand-700 transition-colors hover:bg-brand-50"
+            className="rounded-xl border border-navy-900 px-5 py-3 text-sm font-bold text-navy-900 transition-colors hover:bg-navy-900 hover:text-white"
           >
             {copied ? "¡Enlace copiado!" : "Copiar enlace al cálculo"}
           </button>
           <button
             type="button"
             onClick={resetForm}
-            className="rounded-lg px-4 py-3 text-sm font-medium text-ink-500 underline underline-offset-2 transition-colors hover:text-brand-700"
+            className="rounded-xl px-4 py-3 text-sm font-semibold text-ink-500 underline underline-offset-2 transition-colors hover:text-fincax-700"
           >
             Limpiar
           </button>
@@ -710,7 +713,7 @@ export default function PlusvaliaCalculator({
         ref={resultsRef}
         tabIndex={-1}
         aria-live="polite"
-        className="scroll-mt-6 outline-none"
+        className="scroll-mt-24 outline-none"
       >
         {result && (
           <ResultsPanel

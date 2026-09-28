@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 /**
@@ -17,21 +18,25 @@ export default function SiteLayout({
         Saltar al contenido principal
       </a>
 
-      <header className="no-print bg-brand-900 text-white">
-        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-4">
-          <a
-            href="https://fincax.es"
-            className="text-xl font-bold tracking-tight"
-            aria-label="FINCAX, ir a la web principal"
-          >
-            finca<span className="text-accent-500">x</span>
+      <header className="no-print sticky top-0 z-40 border-b border-ink-100 bg-white/95 backdrop-blur">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
+          <a href="https://fincax.es" aria-label="FINCAX Agencia Inmobiliaria, ir a la web principal">
+            <Image
+              src="/fincax-logo.png"
+              alt="FINCAX Agencia Inmobiliaria"
+              width={298}
+              height={97}
+              priority
+              unoptimized
+              className="h-11 w-auto"
+            />
           </a>
           <nav aria-label="Principal">
-            <ul className="flex items-center gap-5 text-sm">
+            <ul className="flex items-center gap-5 text-sm font-semibold text-ink-700">
               <li className="hidden sm:block">
                 <a
                   href="https://fincax.es/propiedades"
-                  className="hover:text-accent-400 transition-colors"
+                  className="transition-colors hover:text-fincax-700"
                 >
                   Propiedades
                 </a>
@@ -39,23 +44,23 @@ export default function SiteLayout({
               <li className="hidden sm:block">
                 <a
                   href="https://fincax.es/blog"
-                  className="hover:text-accent-400 transition-colors"
+                  className="transition-colors hover:text-fincax-700"
                 >
                   Blog
                 </a>
               </li>
-              <li>
+              <li className="hidden sm:block">
                 <a
                   href="https://fincax.es"
-                  className="hover:text-accent-400 transition-colors"
+                  className="transition-colors hover:text-fincax-700"
                 >
-                  ← fincax.es
+                  fincax.es
                 </a>
               </li>
               <li>
                 <a
                   href="mailto:fincaxsevilla@gmail.com"
-                  className="rounded-md bg-accent-600 px-3 py-1.5 font-semibold text-white hover:bg-accent-500 transition-colors"
+                  className="rounded-full bg-fincax-700 px-4 py-2 font-bold text-white shadow-sm transition-colors hover:bg-fincax-900"
                 >
                   Contactar
                 </a>
@@ -69,8 +74,18 @@ export default function SiteLayout({
         {children}
       </main>
 
-      <footer className="no-print mt-16 border-t border-ink-300 bg-white">
-        <div className="mx-auto max-w-5xl px-4 py-8 text-sm text-ink-500">
+      <footer className="no-print mt-20 border-t border-ink-100 bg-white">
+        <div className="mx-auto max-w-6xl px-4 py-10 text-sm text-ink-500">
+          <a href="https://fincax.es" aria-label="FINCAX, ir a la web principal">
+            <Image
+              src="/fincax-logo.png"
+              alt="FINCAX Agencia Inmobiliaria"
+              width={298}
+              height={97}
+              unoptimized
+              className="mb-5 h-10 w-auto"
+            />
+          </a>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <p>
               © {new Date().getFullYear()} FINCAX · Sevilla ·{" "}
