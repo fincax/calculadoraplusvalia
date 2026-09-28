@@ -1,4 +1,6 @@
 @import "tailwindcss";
+/* Nunito autoalojada (npm): sin peticiones a Google Fonts (CSP y RGPD). */
+@import "@fontsource-variable/nunito";
 
 /*
  * Design tokens FINCAX — extraídos del manual de marca (fincax.cdr, 2024):
@@ -24,6 +26,16 @@
   --color-accent-600: #d21418; /* variante AA para botones con texto blanco */
   --color-accent-700: #a81013;
 
+  /* Estilo de las herramientas de fincax.es (valorador, simulador de
+     hipoteca): banda roja burdeos y tarjeta de resultados azul marino. */
+  --color-fincax-600: #b80d10;
+  --color-fincax-700: #a30000;
+  --color-fincax-800: #990000;
+  --color-fincax-900: #7a0000;
+  --color-navy-800: #1e293b;
+  --color-navy-900: #111827;
+  --color-surface: #f6f7fb;
+
   --color-ink-900: #231f20;
   --color-ink-700: #4f4c4d;
   --color-ink-500: #7b7979;
@@ -31,8 +43,8 @@
   --color-ink-100: #efefef;
   --color-ink-50: #f9f9f9;
 
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif;
+  --font-sans: "Nunito Variable", ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 html {
@@ -40,10 +52,17 @@ html {
 }
 
 body {
-  background: var(--color-ink-50);
+  background: var(--color-surface);
   color: var(--color-ink-900);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+}
+
+/* Banda de cabecera de las herramientas: rojo FINCAX con un patrón sutil
+   de cruces, como en fincax.es/valorador y /simulador-hipoteca. */
+.fincax-hero {
+  background-color: var(--color-fincax-800);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Cpath d='M14 10v8M10 14h8' stroke='%23ffffff' stroke-opacity='0.09' stroke-width='1.2'/%3E%3C/svg%3E");
 }
 
 /* Foco visible y accesible en toda la app */

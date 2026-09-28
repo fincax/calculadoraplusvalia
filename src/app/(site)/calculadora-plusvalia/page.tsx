@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import PlusvaliaCalculator from "@/components/calculator/PlusvaliaCalculator";
 import CoefficientTable from "@/components/CoefficientTable";
+import ToolHero from "@/components/ToolHero";
 import { listMunicipalities } from "@/lib/plusvalia/data/municipalities";
 import { SITE_URL } from "@/lib/site/url";
 
@@ -88,37 +89,39 @@ export default function CalculadoraPlusvaliaPage() {
   };
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10">
+    <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <header className="no-print max-w-3xl">
-        <p className="text-xs font-semibold uppercase tracking-widest text-accent-600">
-          Herramientas profesionales · Servicios que te ayudan a decidir
-        </p>
-        <h1 className="mt-2 text-3xl font-bold text-brand-900 sm:text-4xl">
-          Calculadora de Plusvalía Municipal
-        </h1>
-        <p className="mt-3 text-lg text-ink-700">
-          Calcula cuánto podrías pagar de plusvalía municipal al vender,
-          heredar o recibir un inmueble.
-        </p>
-        <p className="mt-2 text-sm text-ink-500">
-          Sevilla y provincia · Normativa vigente (RD-ley 26/2021 y
-          actualizaciones) · Gratis y sin registro · Tus datos no salen de tu
-          navegador
-        </p>
-      </header>
+      <ToolHero
+        eyebrow="Herramientas profesionales · Servicios que te ayudan a decidir"
+        title={
+          <>
+            Calculadora de Plusvalía Municipal
+            <span className="block">en Sevilla y provincia</span>
+          </>
+        }
+        subtitle="Calcula cuánto podrías pagar de plusvalía municipal al vender, heredar o recibir un inmueble. Comparamos el método objetivo y el real con la normativa vigente."
+        pills={["100% Gratuito", "Normativa 2026", "Sin Registro", "Datos privados"]}
+        stats={[
+          { value: "106", label: "Municipios" },
+          { value: "2", label: "Métodos comparados" },
+          { value: "0 €", label: "Coste" },
+        ]}
+      />
 
-      <PlusvaliaCalculator />
+      <div className="mx-auto max-w-5xl px-4">
+      <div className="relative z-10 -mt-20">
+        <PlusvaliaCalculator />
+      </div>
 
       <section
         aria-labelledby="como-funciona"
         className="no-print mt-16 max-w-3xl"
       >
-        <h2 id="como-funciona" className="text-2xl font-bold text-brand-900">
+        <h2 id="como-funciona" className="text-2xl font-extrabold text-navy-900">
           Cómo calcula la plusvalía esta herramienta
         </h2>
         <ol className="mt-4 list-decimal space-y-3 pl-5 text-ink-700">
@@ -147,7 +150,7 @@ export default function CalculadoraPlusvaliaPage() {
       </section>
 
       <section aria-labelledby="coeficientes" className="no-print mt-16">
-        <h2 id="coeficientes" className="text-2xl font-bold text-brand-900">
+        <h2 id="coeficientes" className="text-2xl font-extrabold text-navy-900">
           Tabla de coeficientes de la plusvalía municipal (2026)
         </h2>
         <p className="mt-2 max-w-3xl text-ink-700">
@@ -162,7 +165,7 @@ export default function CalculadoraPlusvaliaPage() {
       </section>
 
       <section aria-labelledby="ejemplo" className="no-print mt-16 max-w-3xl">
-        <h2 id="ejemplo" className="text-2xl font-bold text-brand-900">
+        <h2 id="ejemplo" className="text-2xl font-extrabold text-navy-900">
           Ejemplo real: cuánto se paga de plusvalía en Sevilla
         </h2>
         <p className="mt-2 text-ink-700">
@@ -197,7 +200,7 @@ export default function CalculadoraPlusvaliaPage() {
       </section>
 
       <section aria-labelledby="municipios" className="no-print mt-16">
-        <h2 id="municipios" className="text-2xl font-bold text-brand-900">
+        <h2 id="municipios" className="text-2xl font-extrabold text-navy-900">
           Calculadora por municipio de la provincia de Sevilla
         </h2>
         <p className="mt-2 max-w-3xl text-ink-700">
@@ -221,7 +224,7 @@ export default function CalculadoraPlusvaliaPage() {
       </section>
 
       <section aria-labelledby="faq" className="no-print mt-16 max-w-3xl">
-        <h2 id="faq" className="text-2xl font-bold text-brand-900">
+        <h2 id="faq" className="text-2xl font-extrabold text-navy-900">
           Preguntas frecuentes
         </h2>
         <dl className="mt-6 space-y-6">
@@ -233,6 +236,7 @@ export default function CalculadoraPlusvaliaPage() {
           ))}
         </dl>
       </section>
-    </div>
+      </div>
+    </>
   );
 }

@@ -12,6 +12,7 @@ import {
 } from "@/lib/plusvalia/data/opaef";
 import { formatDateES, formatPct } from "@/lib/plusvalia/format";
 import { SITE_URL } from "@/lib/site/url";
+import ToolHero from "@/components/ToolHero";
 
 /**
  * Páginas por municipio de la provincia (SEO local:
@@ -136,38 +137,34 @@ export default async function MunicipioPage({
   };
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10">
+    <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <nav aria-label="Miga de pan" className="no-print text-sm text-ink-500">
-        <Link
-          href="/calculadora-plusvalia"
-          className="underline hover:text-accent-600"
-        >
-          Calculadora de Plusvalía Municipal
-        </Link>{" "}
-        / <span className="text-ink-900">{name}</span>
-      </nav>
+      <ToolHero
+        eyebrow="Herramientas profesionales · Servicios que te ayudan a decidir"
+        title={<>Calculadora de Plusvalía Municipal en {name}</>}
+        subtitle={`Calcula cuánto podrías pagar de plusvalía (IIVTNU) al vender, heredar o recibir un inmueble en ${name}.`}
+        pills={[
+          "100% Gratuito",
+          rules.verified ? "Ordenanza verificada" : "Estimación por máximos",
+          "Sin Registro",
+        ]}
+      >
+        <nav aria-label="Miga de pan" className="mb-8 text-sm text-white/80">
+          <Link href="/calculadora-plusvalia" className="underline hover:text-white">
+            Calculadora de Plusvalía Municipal
+          </Link>{" "}
+          / <span className="font-semibold text-white">{name}</span>
+        </nav>
+      </ToolHero>
 
-      <header className="no-print mt-4 max-w-3xl">
-        <p className="text-xs font-semibold uppercase tracking-widest text-accent-600">
-          Herramientas profesionales · Servicios que te ayudan a decidir
-        </p>
-        <h1 className="mt-2 text-3xl font-bold text-brand-900 sm:text-4xl">
-          Calculadora de Plusvalía Municipal en {name}
-        </h1>
-        <p className="mt-3 text-lg text-ink-700">
-          Calcula cuánto podrías pagar de plusvalía (IIVTNU) al vender, heredar
-          o recibir un inmueble en {name}.
-        </p>
-      </header>
-
+      <div className="mx-auto max-w-5xl px-4">
       <section
         aria-label={`Datos fiscales de ${name}`}
-        className="no-print mt-6 max-w-3xl rounded-xl border border-ink-300 bg-white p-5 text-sm"
+        className="no-print relative z-10 -mt-20 rounded-2xl bg-white p-5 text-sm shadow-xl ring-1 ring-black/5 sm:p-6"
       >
         {rules.verified ? (
           <p className="text-ink-700">
@@ -207,13 +204,15 @@ export default async function MunicipioPage({
         </p>
       </section>
 
-      <PlusvaliaCalculator initialMunicipalityCode={municipio} />
+      <div className="mt-6">
+        <PlusvaliaCalculator initialMunicipalityCode={municipio} />
+      </div>
 
       <section
         aria-labelledby="donde-se-paga"
         className="no-print mt-16 max-w-3xl"
       >
-        <h2 id="donde-se-paga" className="text-2xl font-bold text-brand-900">
+        <h2 id="donde-se-paga" className="text-2xl font-extrabold text-navy-900">
           Dónde y cómo se paga la plusvalía en {name}
         </h2>
         <div className="mt-4 rounded-xl border border-brand-200 bg-brand-50 p-5">
@@ -240,7 +239,7 @@ export default async function MunicipioPage({
       </section>
 
       <section aria-labelledby="faq-municipio" className="no-print mt-16 max-w-3xl">
-        <h2 id="faq-municipio" className="text-2xl font-bold text-brand-900">
+        <h2 id="faq-municipio" className="text-2xl font-extrabold text-navy-900">
           Preguntas frecuentes sobre la plusvalía en {name}
         </h2>
         <dl className="mt-6 space-y-6">
@@ -254,7 +253,7 @@ export default async function MunicipioPage({
       </section>
 
       <section aria-labelledby="otros-municipios" className="no-print mt-16">
-        <h2 id="otros-municipios" className="text-xl font-bold text-brand-900">
+        <h2 id="otros-municipios" className="text-xl font-extrabold text-navy-900">
           Plusvalía municipal en otros municipios cercanos
         </h2>
         <ul className="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-sm">
@@ -278,6 +277,7 @@ export default async function MunicipioPage({
           </li>
         </ul>
       </section>
-    </div>
+      </div>
+    </>
   );
 }

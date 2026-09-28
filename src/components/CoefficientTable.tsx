@@ -40,7 +40,7 @@ export default function CoefficientTable() {
           <div key={i} className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-ink-300 text-left text-xs uppercase tracking-wide text-ink-500">
+                <tr className="border-b border-slate-200 text-left text-xs uppercase tracking-wide text-ink-500">
                   <th scope="col" className="py-2 pr-4 font-semibold">
                     Periodo de generación
                   </th>

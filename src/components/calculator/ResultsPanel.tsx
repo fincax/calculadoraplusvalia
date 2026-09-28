@@ -59,12 +59,12 @@ function MethodCard({
       className={`rounded-xl border p-5 ${
         chosen
           ? "border-brand-600 bg-brand-50 ring-2 ring-brand-200"
-          : "border-ink-300 bg-white"
+          : "border-slate-200 bg-white"
       }`}
       aria-label={`${title}${chosen ? " (método aplicado)" : ""}`}
     >
       <header className="flex items-center justify-between gap-2">
-        <h4 className="font-semibold text-brand-900">{title}</h4>
+        <h4 className="font-bold text-navy-900">{title}</h4>
         {chosen && (
           <span className="rounded-full bg-brand-700 px-2.5 py-0.5 text-xs font-semibold text-white">
             Aplicado
@@ -73,7 +73,7 @@ function MethodCard({
       </header>
       <p className="mt-0.5 text-xs text-ink-500">{legalBasis}</p>
       <StepList steps={method.steps} />
-      <p className="mt-4 border-t border-ink-300 pt-3 text-right text-lg font-bold tabular-nums text-brand-900">
+      <p className="mt-4 border-t border-slate-200 pt-3 text-right text-lg font-bold tabular-nums text-brand-900">
         {formatEUR(method.grossTax)}
       </p>
     </article>
@@ -133,10 +133,10 @@ export default function ResultsPanel({
   return (
     <section
       aria-labelledby="titulo-resultado"
-      className="print-report mt-10 rounded-2xl border border-ink-300 bg-white p-6 shadow-sm sm:p-8"
+      className="print-report mt-8 rounded-2xl bg-white p-6 shadow-xl ring-1 ring-black/5 sm:p-8"
     >
       {/* Cabecera solo para impresión */}
-      <div className="print-only mb-6 border-b border-ink-300 pb-4">
+      <div className="print-only mb-6 border-b border-slate-200 pb-4">
         <p className="text-lg font-bold">
           FINCAX — Informe orientativo de Plusvalía Municipal (IIVTNU)
         </p>
@@ -148,7 +148,7 @@ export default function ResultsPanel({
       </div>
 
       <header>
-        <h2 id="titulo-resultado" className="text-2xl font-bold text-brand-900">
+        <h2 id="titulo-resultado" className="text-2xl font-extrabold text-navy-900">
           Resultado de tu cálculo
         </h2>
 
@@ -175,7 +175,7 @@ export default function ResultsPanel({
             </p>
           </div>
         ) : (
-          <div className="mt-4 rounded-xl bg-brand-900 p-6 text-white">
+          <div className="mt-4 rounded-2xl bg-navy-900 p-6 text-white shadow-lg sm:p-7">
             <p className="text-sm uppercase tracking-wide text-brand-200">
               Cuota estimada en {r.rules.municipalityName}
             </p>
@@ -236,7 +236,7 @@ export default function ResultsPanel({
       )}
 
       <div className="mt-8">
-        <h3 className="text-lg font-semibold text-brand-900">
+        <h3 className="text-lg font-bold text-navy-900">
           Comparación de los dos métodos de cálculo
         </h3>
         <p className="mt-1 text-sm text-ink-500">
@@ -267,8 +267,8 @@ export default function ResultsPanel({
       </div>
 
       {projection && (
-        <details className="mt-8 rounded-xl border border-ink-300 p-5">
-          <summary className="cursor-pointer text-lg font-semibold text-brand-900">
+        <details className="mt-8 rounded-xl border border-slate-200 p-5">
+          <summary className="cursor-pointer text-lg font-bold text-navy-900">
             ¿Cuándo me conviene vender? Cuota objetiva por años de tenencia
           </summary>
           <p className="mt-2 text-sm text-ink-500">
@@ -281,7 +281,7 @@ export default function ResultsPanel({
           <div className="mt-4 overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-ink-300 text-left text-xs uppercase tracking-wide text-ink-500">
+                <tr className="border-b border-slate-200 text-left text-xs uppercase tracking-wide text-ink-500">
                   <th scope="col" className="py-2 pr-4 font-semibold">
                     Años de tenencia
                   </th>
@@ -346,8 +346,8 @@ export default function ResultsPanel({
       )}
 
       {equilibrium && (
-        <div className="mt-6 rounded-xl border border-ink-300 p-5">
-          <h3 className="text-lg font-semibold text-brand-900">
+        <div className="mt-6 rounded-xl border border-slate-200 p-5">
+          <h3 className="text-lg font-bold text-navy-900">
             ¿A qué {priceLabel} cambia el resultado?
           </h3>
           <ul className="mt-3 space-y-2 text-sm text-ink-700">
@@ -378,7 +378,7 @@ export default function ResultsPanel({
 
       {r.bonusesApplied.length > 0 && (
         <div className="mt-8 rounded-xl border border-brand-200 bg-brand-50 p-5">
-          <h3 className="text-lg font-semibold text-brand-900">
+          <h3 className="text-lg font-bold text-navy-900">
             Bonificaciones aplicadas
           </h3>
           {r.bonusesApplied.map((b) => (
@@ -416,8 +416,8 @@ export default function ResultsPanel({
       )}
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
-        <div className="rounded-xl border border-ink-300 p-5">
-          <h3 className="font-semibold text-brand-900">Plazo de presentación</h3>
+        <div className="rounded-xl border border-slate-200 p-5">
+          <h3 className="font-bold text-navy-900">Plazo de presentación</h3>
           <p className="mt-2 text-sm text-ink-700">{r.deadline.description}</p>
           {r.deadline.estimatedDeadline && (
             <p className="mt-2 text-sm">
@@ -450,8 +450,8 @@ export default function ResultsPanel({
           )}
         </div>
 
-        <div className="rounded-xl border border-ink-300 p-5">
-          <h3 className="font-semibold text-brand-900">
+        <div className="rounded-xl border border-slate-200 p-5">
+          <h3 className="font-bold text-navy-900">
             ¿Quién paga el impuesto?
           </h3>
           <p className="mt-2 text-sm text-ink-700">{r.taxpayerNote}</p>
@@ -518,8 +518,8 @@ export default function ResultsPanel({
       )}
 
       {r.exemptionNotices.length > 0 && (
-        <details className="mt-6 rounded-xl border border-ink-300 p-5">
-          <summary className="cursor-pointer font-semibold text-brand-900">
+        <details className="mt-6 rounded-xl border border-slate-200 p-5">
+          <summary className="cursor-pointer font-bold text-navy-900">
             Otras exenciones y supuestos de no sujeción que conviene conocer
           </summary>
           <ul className="mt-3 space-y-3">
@@ -534,7 +534,7 @@ export default function ResultsPanel({
         </details>
       )}
 
-      <div className="mt-8 border-t border-ink-300 pt-5">
+      <div className="mt-8 border-t border-slate-200 pt-5">
         <h3 className="text-sm font-semibold text-ink-900">
           Fuentes normativas utilizadas
         </h3>
@@ -561,14 +561,14 @@ export default function ResultsPanel({
             const { downloadPdfReport } = await import("./downloadReport");
             downloadPdfReport(r);
           }}
-          className="rounded-lg bg-brand-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-800"
+          className="rounded-xl bg-navy-900 px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-navy-800"
         >
           Descargar informe en PDF
         </button>
         <button
           type="button"
           onClick={() => window.print()}
-          className="rounded-lg border border-brand-700 px-5 py-2.5 text-sm font-semibold text-brand-700 transition-colors hover:bg-brand-50"
+          className="rounded-xl border border-navy-900 px-5 py-2.5 text-sm font-bold text-navy-900 transition-colors hover:bg-navy-900 hover:text-white"
         >
           Imprimir
         </button>
