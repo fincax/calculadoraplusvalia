@@ -33,7 +33,7 @@ export default function SiteLayout({
           </a>
           <nav aria-label="Principal">
             <ul className="flex items-center gap-5 text-sm font-semibold text-ink-700">
-              <li className="hidden sm:block">
+              <li>
                 <a
                   href="https://fincax.es/propiedades"
                   className="transition-colors hover:text-fincax-700"
@@ -41,28 +41,12 @@ export default function SiteLayout({
                   Propiedades
                 </a>
               </li>
-              <li className="hidden sm:block">
+              <li>
                 <a
                   href="https://fincax.es/blog"
                   className="transition-colors hover:text-fincax-700"
                 >
                   Blog
-                </a>
-              </li>
-              <li className="hidden sm:block">
-                <a
-                  href="https://fincax.es"
-                  className="transition-colors hover:text-fincax-700"
-                >
-                  fincax.es
-                </a>
-              </li>
-              <li>
-                <a
-                  href="mailto:fincaxsevilla@gmail.com"
-                  className="rounded-full bg-fincax-700 px-4 py-2 font-bold text-white shadow-sm transition-colors hover:bg-fincax-900"
-                >
-                  Contactar
                 </a>
               </li>
             </ul>
