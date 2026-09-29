@@ -27,6 +27,12 @@ alto automáticamente (mensajes `postMessage`). No usa cookies.
 
 La vista lista para copiar está en `docs/laravel/calculadora-plusvalia.blade.php`.
 
+**Lo más fácil y fiel al diseño:** duplicar la vista del valorador o del
+simulador de hipoteca (ya tiene cabecera, banda roja y pie) y sustituir su
+formulario por el bloque del embebido. La versión embebida tiene **fondo
+transparente**, así que su tarjeta blanca puede montarse sobre la banda roja
+con un margen negativo (como el formulario del valorador) sin recuadros.
+
 1. Copiarla a `resources/views/herramientas/calculadora-plusvalia.blade.php` y
    ajustar `@extends('layouts.app')`, `@section('content')` y `@push('head')` a
    los nombres que use el layout de la web (si el layout no tiene

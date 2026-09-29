@@ -24,7 +24,7 @@ export default async function EmbedMunicipioPage({
   const exists = listMunicipalities().some((m) => m.code === municipio);
   if (!exists) notFound();
   return (
-    <div className="mx-auto max-w-3xl px-4 py-6">
+    <div className="mx-auto max-w-3xl px-2 py-6 sm:px-4">
       <EmbedCalculator initialMunicipalityCode={municipio} />
       <EmbedCredit />
     </div>
