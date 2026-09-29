@@ -25,33 +25,33 @@ alto automáticamente (mensajes `postMessage`). No usa cookies.
 
 ## En la web de FINCAX (fincax.es, hecha en Laravel)
 
-La vista lista para copiar está en `docs/laravel/calculadora-plusvalia.blade.php`.
+Vista lista para copiar: `docs/laravel/calculadora-plusvalia.blade.php`.
+Está **calcada a la del valorador** (`property-valuation.blade.php`, aportada
+por el usuario): layout `frontend.layouts.app`, secciones `title`,
+`meta_description` y `content`, misma banda roja `#a90101` con patrón, icono,
+píldoras, cifras, insignias y FAQ. En lugar del formulario lleva el embebido,
+superpuesto a la banda (`pb-16 -mt-24`; el embebido tiene fondo transparente).
 
-**Lo más fácil y fiel al diseño:** duplicar la vista del valorador o del
-simulador de hipoteca (ya tiene cabecera, banda roja y pie) y sustituir su
-formulario por el bloque del embebido. La versión embebida tiene **fondo
-transparente**, así que su tarjeta blanca puede montarse sobre la banda roja
-con un margen negativo (como el formulario del valorador) sin recuadros.
-
-1. Copiarla a `resources/views/herramientas/calculadora-plusvalia.blade.php` y
-   ajustar `@extends('layouts.app')`, `@section('content')` y `@push('head')` a
-   los nombres que use el layout de la web (si el layout no tiene
-   `@stack('head')`, mover el `<meta>` y el `<link rel="canonical">` a donde
-   el layout imprima la cabecera).
-2. Añadir la ruta en `routes/web.php`:
+1. Copiarla junto a `property-valuation.blade.php` con el nombre
+   `calculadora-plusvalia.blade.php`.
+2. Ruta en `routes/web.php`, junto a las del valorador (ajustar el prefijo de
+   carpeta de la vista si `property-valuation` está en una subcarpeta, p. ej.
+   `frontend.calculadora-plusvalia`):
 
    ```php
-   Route::view('/calculadora-plusvalia', 'herramientas.calculadora-plusvalia')
+   Route::view('/calculadora-plusvalia', 'frontend.calculadora-plusvalia')
        ->name('calculadora-plusvalia');
    ```
-3. Enlazarla desde la tarjeta de «Herramientas profesionales»:
+3. Canonical: la vista hace `@push('head')`. Comprobar que el layout
+   `resources/views/frontend/layouts/app.blade.php` tiene `@stack('head')`
+   dentro de `<head>`; si no, añadir esa línea justo antes de `</head>`.
+4. Enlazarla desde «Herramientas profesionales»:
    `<a href="{{ route('calculadora-plusvalia') }}">`.
-4. Si hay caché de rutas/vistas en producción:
-   `php artisan route:cache && php artisan view:cache`.
-5. Si la web Laravel envía una cabecera Content-Security-Policy (p. ej. con
-   `spatie/laravel-csp` o desde su servidor web), añadir
-   `https://calculadoraplusvalia.com` a `script-src` y `frame-src`. Si no hay
-   CSP, no hay que tocar nada.
+5. `php artisan route:clear && php artisan view:clear`. Si la web compila
+   Tailwind con Vite y algo sale sin estilo, `npm run build` (la vista usa
+   las mismas clases que el valorador, así que no debería hacer falta).
+6. Si la web Laravel envía una cabecera Content-Security-Policy, añadir
+   `https://calculadoraplusvalia.com` a `script-src` y `frame-src`.
 
 SEO: el contenido de un iframe **no posiciona** para la página que lo
 contiene (la versión embebida es además `noindex`). Lo que posiciona es
