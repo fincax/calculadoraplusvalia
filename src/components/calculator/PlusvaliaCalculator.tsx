@@ -337,12 +337,12 @@ export default function PlusvaliaCalculator({
             <div
               role="radiogroup"
               aria-label="Tipo de transmisión"
-              className="mt-1 grid grid-cols-3 gap-2"
+              className="mt-1 grid grid-cols-[repeat(auto-fit,minmax(6.5rem,1fr))] gap-2"
             >
               {(Object.keys(transferTypeLabels) as TransferType[]).map((t) => (
                 <label
                   key={t}
-                  className={`cursor-pointer rounded-xl border px-3 py-2.5 text-center text-sm font-bold transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-fincax-600 has-[:focus-visible]:ring-offset-1 ${
+                  className={`cursor-pointer rounded-xl border px-1.5 py-2.5 text-center text-[13px] font-bold sm:px-3 sm:text-sm transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-fincax-600 has-[:focus-visible]:ring-offset-1 ${
                     form.transferType === t
                       ? "border-fincax-700 bg-fincax-700 text-white shadow-sm"
                       : "border-slate-300 bg-white text-ink-700 hover:border-fincax-600 hover:text-fincax-700"
